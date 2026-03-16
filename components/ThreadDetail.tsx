@@ -5,8 +5,10 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { buildServicePausedPath, isServicePausedCandidateError } from '../lib/servicePause';
+import { useTheme } from './theme-provider';
 import { api } from '../services/api';
 import { ThreadDetail, Post } from '../types';
 import { PostForm } from './PostForm';
@@ -94,7 +96,7 @@ const QuoteAnchor: React.FC<QuoteAnchorProps> = ({ targetId, allPosts, onQuoteCl
     <span className="relative inline-block">
       <button
         type="button"
-        className="text-[#0056b3] hover:underline cursor-pointer bg-transparent border-none p-0"
+        className="cursor-pointer border-none bg-transparent p-0 text-[#0056b3] hover:underline dark:text-sky-300"
         onClick={() => onQuoteClick(targetId)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setHoveredPost(null)}
@@ -103,14 +105,14 @@ const QuoteAnchor: React.FC<QuoteAnchorProps> = ({ targetId, allPosts, onQuoteCl
       </button>
       {hoveredPost && hoveredPost.id === targetId && (
         <span
-          className="fixed z-50 bg-white border border-gray-400 p-3 text-xs shadow-xl rounded max-w-md pointer-events-none text-left"
+          className="fixed z-50 max-w-md rounded border border-gray-400 bg-white p-3 text-left text-xs shadow-xl pointer-events-none dark:border-gray-700 dark:bg-gray-900"
           style={{ left: tooltipPos.x, top: tooltipPos.y }}
         >
-          <span className="mb-2 border-b pb-1 text-gray-500 font-bold flex justify-between">
-            <span>{hoveredPost.id} : <span className="text-[#117743]">{hoveredPost.name}</span></span>
-            <span className="text-gray-400 text-[10px]">{hoveredPost.createdAt.split('T')[0]}</span>
+          <span className="mb-2 flex justify-between border-b pb-1 font-bold text-gray-500 dark:border-gray-700 dark:text-gray-400">
+            <span>{hoveredPost.id} : <span className="text-[#117743] dark:text-emerald-300">{hoveredPost.name}</span></span>
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">{hoveredPost.createdAt.split('T')[0]}</span>
           </span>
-          <span className="max-h-40 overflow-hidden text-gray-800 leading-snug block">
+          <span className="block max-h-40 overflow-hidden leading-snug text-gray-800 dark:text-gray-200">
             {hoveredPost.content}
           </span>
         </span>
@@ -121,9 +123,11 @@ const QuoteAnchor: React.FC<QuoteAnchorProps> = ({ targetId, allPosts, onQuoteCl
 
 const RichText: React.FC<RichTextProps> = ({ content, allPosts, onQuoteClick }) => {
   const markdown = useMemo(() => transformQuoteSyntax(content), [content]);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   return (
-    <div className="break-words leading-relaxed text-[#333] text-[15px]">
+    <div className="break-words text-[15px] leading-relaxed text-[#333] dark:text-gray-200">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
         skipHtml
@@ -145,25 +149,25 @@ const RichText: React.FC<RichTextProps> = ({ content, allPosts, onQuoteClick }) 
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0056b3] hover:underline break-all"
+                className="break-all text-[#0056b3] hover:underline dark:text-sky-300"
                 {...props}
               >
                 {children}
               </a>
             );
           },
-          p: ({ children }) => <p className="mb-2 last:mb-0 whitespace-pre-wrap">{children}</p>,
+          p: ({ children }) => <p className="mb-2 whitespace-pre-wrap last:mb-0">{children}</p>,
           ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-5">{children}</ul>,
           ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-5">{children}</ol>,
           li: ({ children }) => <li className="leading-relaxed">{children}</li>,
           blockquote: ({ children }) => (
-            <blockquote className="my-2 border-l-4 border-gray-300 pl-3 text-gray-700">{children}</blockquote>
+            <blockquote className="my-2 border-l-4 border-gray-300 pl-3 text-gray-700 dark:border-gray-600 dark:text-gray-300">{children}</blockquote>
           ),
           pre: ({ children }) => <div className="my-2">{children}</div>,
           code: ({ inline, className, children, ...props }) => {
             if (inline) {
               return (
-                <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-[0.92em]" {...props}>
+                <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-[0.92em] dark:bg-gray-800 dark:text-gray-100" {...props}>
                   {children}
                 </code>
               );
@@ -174,15 +178,15 @@ const RichText: React.FC<RichTextProps> = ({ content, allPosts, onQuoteClick }) 
 
             return (
               <SyntaxHighlighter
-                style={oneLight}
+                style={isDark ? oneDark : oneLight}
                 language={match?.[1] ?? 'text'}
                 PreTag="div"
                 customStyle={{
                   margin: 0,
-                  border: '1px solid #e5e7eb',
+                  border: isDark ? '1px solid #364152' : '1px solid #e5e7eb',
                   borderRadius: '0.375rem',
                   padding: '0.75rem',
-                  background: '#f8fafc',
+                  background: isDark ? '#111827' : '#f8fafc',
                   fontSize: '0.85rem',
                 }}
               >
@@ -192,13 +196,13 @@ const RichText: React.FC<RichTextProps> = ({ content, allPosts, onQuoteClick }) 
           },
           table: ({ children }) => (
             <div className="my-3 overflow-x-auto">
-              <table className="min-w-full border-collapse border border-gray-300 text-sm">{children}</table>
+              <table className="min-w-full border-collapse border border-gray-300 text-sm dark:border-gray-700">{children}</table>
             </div>
           ),
-          thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
-          tr: ({ children }) => <tr className="border-b border-gray-300">{children}</tr>,
-          th: ({ children }) => <th className="border border-gray-300 px-2 py-1 text-left font-bold">{children}</th>,
-          td: ({ children }) => <td className="border border-gray-300 px-2 py-1 align-top">{children}</td>,
+          thead: ({ children }) => <thead className="bg-gray-100 dark:bg-gray-800">{children}</thead>,
+          tr: ({ children }) => <tr className="border-b border-gray-300 dark:border-gray-700">{children}</tr>,
+          th: ({ children }) => <th className="border border-gray-300 px-2 py-1 text-left font-bold dark:border-gray-700">{children}</th>,
+          td: ({ children }) => <td className="border border-gray-300 px-2 py-1 align-top dark:border-gray-700">{children}</td>,
         }}
       >
         {markdown}
@@ -233,17 +237,17 @@ const SinglePost: React.FC<{ post: Post, allPosts: Post[], onReply: (id: number)
   const displayName = post.name === 'Anonymous' ? t('meta.anonymous') : post.name;
 
   return (
-    <div className="bg-white p-4 mb-3 border-b border-gray-200 sm:rounded-sm sm:shadow-sm sm:border" id={`p${post.id}`}>
-      <div className="flex flex-wrap items-baseline text-sm mb-3 text-gray-600 gap-2">
-        <span className="font-bold text-black">{post.id}</span>
-        <span className="font-bold text-[#333]">
+    <div className="mb-3 border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 sm:rounded-sm sm:border sm:shadow-sm" id={`p${post.id}`}>
+      <div className="mb-3 flex flex-wrap items-baseline gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <span className="font-bold text-black dark:text-gray-100">{post.id}</span>
+        <span className="font-bold text-[#333] dark:text-gray-100">
           {displayName}
-          {post.tripcode && <span className="text-[#117743] font-normal ml-1">{post.tripcode}</span>}
+          {post.tripcode && <span className="ml-1 font-normal text-[#117743] dark:text-emerald-300">{post.tripcode}</span>}
         </span>
         <span className="text-xs">{dateStr}</span>
         <span className="text-xs">ID:{post.uid}</span>
         <div className="ml-auto text-xs flex gap-2">
-          <button onClick={() => onReply(post.id)} className="text-[#0056b3] hover:underline">[Reply]</button>
+          <button onClick={() => onReply(post.id)} className="text-[#0056b3] hover:underline dark:text-sky-300">[Reply]</button>
         </div>
       </div>
       <div className="pl-0 sm:pl-2">
@@ -328,19 +332,19 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
     }, 100);
   };
 
-  if (!data) return <div className="p-4 text-center text-gray-500">{t('meta.loading')}</div>;
+  if (!data) return <div className="p-4 text-center text-gray-500 dark:text-gray-400">{t('meta.loading')}</div>;
 
   return (
     <div className="max-w-4xl mx-auto pb-20 px-0 sm:px-2">
-      <div className="bg-white mb-4 p-4 border-b border-gray-200 sm:rounded-sm sm:shadow-sm">
-        <div className="flex items-center text-xs text-gray-500 mb-2">
-          <button onClick={onBack} className="text-[#0056b3] hover:underline mr-2">
+      <div className="mb-4 border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 sm:rounded-sm sm:shadow-sm">
+        <div className="mb-2 flex items-center text-xs text-gray-500 dark:text-gray-400">
+          <button onClick={onBack} className="mr-2 text-[#0056b3] hover:underline dark:text-sky-300">
             &lt; {t('nav.boards')}
           </button>
           <span>/ {data.boardId} /</span>
         </div>
-        <h1 className="text-xl md:text-2xl font-bold text-[#333] mb-2">{data.title}</h1>
-        <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mt-2">
+        <h1 className="mb-2 text-xl font-bold text-[#333] dark:text-gray-100 md:text-2xl">{data.title}</h1>
+        <div className="mt-2 flex items-center gap-4 text-xs font-bold text-gray-500 dark:text-gray-400">
           <span className="flex items-center gap-1 text-[#d32f2f]">
             <span>💬</span> {data.postCount}
           </span>
@@ -365,12 +369,12 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
           />
         ))}
       </div>
-      <div className="mt-6 pt-4 bg-white p-4 border-t border-gray-200 sm:rounded-sm shadow-sm" id="reply-form">
+      <div className="mt-6 border-t border-gray-200 bg-white p-4 pt-4 dark:border-gray-700 dark:bg-gray-900 sm:rounded-sm shadow-sm" id="reply-form">
         {!showReplyForm ? (
           <div className="flex justify-center">
             <button
               onClick={() => setShowReplyForm(true)}
-              className="bg-white px-6 py-3 rounded shadow-sm border border-gray-300 text-[#333] font-bold hover:bg-gray-50 flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
+              className="flex w-full items-center justify-center gap-2 rounded border border-gray-300 bg-white px-6 py-3 font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 sm:w-auto"
             >
               <span className="text-xl text-[#2da0b3]">✏️</span>
               {t('thread.reply')}
@@ -378,7 +382,7 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
           </div>
         ) : (
           <>
-            <h3 className="mb-2 font-bold text-gray-600 border-b pb-1">{t('thread.reply')}</h3>
+            <h3 className="mb-2 border-b border-gray-200 pb-1 font-bold text-gray-600 dark:border-gray-700 dark:text-gray-300">{t('thread.reply')}</h3>
             <div className="flex justify-center mt-2">
               <PostForm
                 key={formKey}

@@ -12,10 +12,10 @@ interface DocsProps {
 // Section block: consistent headings with anchor offset.
 const Section: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
     <section id={id} className="mb-12 scroll-mt-20">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
-            <span className="text-[#2da0b3]">#</span> {title}
+        <h3 className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-100">
+            <span className="text-[#2da0b3] dark:text-cyan-300">#</span> {title}
         </h3>
-        <div className="text-gray-700 leading-relaxed space-y-4">
+        <div className="space-y-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {children}
         </div>
     </section>
@@ -24,9 +24,9 @@ const Section: React.FC<{ id: string; title: string; children: React.ReactNode }
 // 代码块：可选标签 + 滚动容器，便于展示命令/示例。
 // Code block: optional label with scrollable container for examples.
 const CodeBlock: React.FC<{ children: React.ReactNode; label?: string }> = ({ children, label }) => (
-    <div className="my-4 rounded border border-gray-200 bg-gray-50 overflow-hidden">
-        {label && <div className="bg-gray-100 px-3 py-1 text-xs font-bold text-gray-500 border-b border-gray-200">{label}</div>}
-        <pre className="p-3 overflow-x-auto text-sm font-mono text-gray-800 whitespace-pre">
+    <div className="my-4 overflow-hidden rounded border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-950">
+        {label && <div className="border-b border-gray-200 bg-gray-100 px-3 py-1 text-xs font-bold text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">{label}</div>}
+        <pre className="overflow-x-auto whitespace-pre p-3 text-sm font-mono text-gray-800 dark:text-gray-100">
             {children}
         </pre>
     </div>
@@ -51,7 +51,7 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
     ];
 
     return (
-        <div className="bg-[#f0f0f0] min-h-screen pb-10">
+        <div className="min-h-screen bg-[#f0f0f0] pb-10 dark:bg-background">
             {/* Header Banner */}
             <div className="bg-[#2da0b3] text-white py-10 px-4 mb-6 shadow-sm">
                 <div className="max-w-6xl mx-auto">
@@ -63,24 +63,24 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
             <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8">
                 {/* Sidebar Nav (Desktop) */}
                 <aside className="hidden md:block w-64 flex-shrink-0">
-                    <div className="sticky top-20 bg-white rounded shadow-sm border border-gray-200 p-4">
-                        <div className="font-bold text-gray-900 mb-4 px-2">{t('docs.toc.title', { defaultValue: 'Table of Contents' })}</div>
+                    <div className="sticky top-20 rounded border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                        <div className="mb-4 px-2 font-bold text-gray-900 dark:text-gray-100">{t('docs.toc.title', { defaultValue: 'Table of Contents' })}</div>
                         <nav className="space-y-1">
                             {navItems.map(item => (
                                 <button
                                     key={item.id}
                                     onClick={() => scrollTo(item.id)}
                                     className={`w-full text-left px-3 py-2 rounded text-sm transition-colors ${activeSection === item.id
-                                        ? 'bg-[#e0f2f1] text-[#00695c] font-bold'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                        ? 'bg-[#e0f2f1] font-bold text-[#00695c] dark:bg-cyan-950/50 dark:text-cyan-200'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100'
                                         }`}
                                 >
                                     {t(`docs.toc.${item.id}`, { defaultValue: item.label })}
                                 </button>
                             ))}
                         </nav>
-                        <div className="mt-6 pt-4 border-t border-gray-100">
-                            <button onClick={onBack} className="text-sm text-[#0056b3] hover:underline flex items-center gap-1 px-2">
+                        <div className="mt-6 border-t border-gray-100 pt-4 dark:border-gray-800">
+                            <button onClick={onBack} className="flex items-center gap-1 px-2 text-sm text-[#0056b3] hover:underline dark:text-sky-300">
                                 &larr; {t('nav.home', { defaultValue: 'Back to App' })}
                             </button>
                         </div>
@@ -89,13 +89,13 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
 
                 {/* Mobile Nav / Back */}
                 <div className="md:hidden mb-4">
-                    <button onClick={onBack} className="text-[#0056b3] hover:underline font-bold">
+                    <button onClick={onBack} className="font-bold text-[#0056b3] hover:underline dark:text-sky-300">
                         &larr; {t('nav.home')}
                     </button>
                 </div>
 
                 {/* Main Content */}
-                <main className="flex-1 bg-white p-6 md:p-10 rounded shadow-sm border border-gray-200 min-h-[500px]">
+                <main className="min-h-[500px] flex-1 rounded border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 md:p-10">
 
                     <Section id="overview" title={t('docs.overview.title')}>
                         <p>
@@ -105,18 +105,18 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
                             {t('docs.overview.description')}
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            <div className="p-4 bg-gray-50 border border-gray-200 rounded">
-                                <div className="font-bold text-gray-800 mb-1">{t('docs.overview.frontend')}</div>
-                                <ul className="list-disc list-inside text-sm text-gray-600">
+                            <div className="rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/70">
+                                <div className="mb-1 font-bold text-gray-800 dark:text-gray-100">{t('docs.overview.frontend')}</div>
+                                <ul className="list-inside list-disc text-sm text-gray-600 dark:text-gray-400">
                                     <li>{t('docs.overview.frontend.react')}</li>
                                     <li>{t('docs.overview.frontend.typescript')}</li>
                                     <li>{t('docs.overview.frontend.tailwind')}</li>
                                     <li>{t('docs.overview.frontend.i18n')}</li>
                                 </ul>
                             </div>
-                            <div className="p-4 bg-gray-50 border border-gray-200 rounded">
-                                <div className="font-bold text-gray-800 mb-1">{t('docs.overview.concepts')}</div>
-                                <ul className="list-disc list-inside text-sm text-gray-600">
+                            <div className="rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/70">
+                                <div className="mb-1 font-bold text-gray-800 dark:text-gray-100">{t('docs.overview.concepts')}</div>
+                                <ul className="list-inside list-disc text-sm text-gray-600 dark:text-gray-400">
                                     <li>{t('docs.overview.concepts.no-router')}</li>
                                     <li>{t('docs.overview.concepts.mock-api')}</li>
                                     <li>{t('docs.overview.concepts.identity')}</li>
@@ -124,7 +124,7 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
                                 </ul>
                             </div>
                         </div>
-                        <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded text-sm text-blue-900">
+                        <div className="mt-4 rounded border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-200">
                             {t('docs.overview.transparency')}
                         </div>
                     </Section>
@@ -133,7 +133,7 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
                         <p>
                             {t('docs.architecture.intro')}
                         </p>
-                        <h4 className="font-bold text-gray-800 mt-4">{t('docs.architecture.view-state')}</h4>
+                        <h4 className="mt-4 font-bold text-gray-800 dark:text-gray-100">{t('docs.architecture.view-state')}</h4>
                         <p>
                             {t('docs.architecture.view-state.desc')}
                         </p>
@@ -154,13 +154,13 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
                         <p>
                             {t('docs.data-model.intro')}
                         </p>
-                        <h4 className="font-bold text-gray-800 mt-4">{t('docs.data-model.entities')}</h4>
+                        <h4 className="mt-4 font-bold text-gray-800 dark:text-gray-100">{t('docs.data-model.entities')}</h4>
                         <ul className="list-disc list-inside pl-2 space-y-1">
                             <li><strong>Board</strong>: {t('docs.data-model.entities.board')}</li>
                             <li><strong>Thread</strong>: {t('docs.data-model.entities.thread')}</li>
                             <li><strong>Post</strong>: {t('docs.data-model.entities.post')}</li>
                         </ul>
-                        <p className="text-sm text-gray-600">{t('docs.data-model.note')}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('docs.data-model.note')}</p>
                         <CodeBlock label={t('docs.data-model.codeLabel')}>
                             {`{
   "id": 12,
@@ -177,7 +177,7 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
 
                     <Section id="features" title={t('docs.features.title')}>
 
-                        <h4 className="font-bold text-gray-800 mt-4 text-lg">{t('docs.features.daily-id.title')}</h4>
+                        <h4 className="mt-4 text-lg font-bold text-gray-800 dark:text-gray-100">{t('docs.features.daily-id.title')}</h4>
                         <p>
                             {t('docs.features.daily-id.intro')}
                         </p>
@@ -195,9 +195,9 @@ Hash = SHA256(Raw)
 Encoded = Base64UrlSafeNoPad(Hash)
 DailyId = Encoded.substring(0, 8)`}
                         </CodeBlock>
-                        <p className="text-sm text-gray-600">{t('docs.features.daily-id.note')}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('docs.features.daily-id.note')}</p>
 
-                        <h4 className="font-bold text-gray-800 mt-6 text-lg">{t('docs.features.tripcode.title')}</h4>
+                        <h4 className="mt-6 text-lg font-bold text-gray-800 dark:text-gray-100">{t('docs.features.tripcode.title')}</h4>
                         <p>
                             {t('docs.features.tripcode.intro')}
                         </p>
@@ -207,7 +207,7 @@ Name = "Name"
 Tripcode = "◆" + hex(SHA256(password + SecretSalt)).slice(0, 10)`}
                         </CodeBlock>
 
-                        <h4 className="font-bold text-gray-800 mt-6 text-lg">{t('docs.features.sage.title')}</h4>
+                        <h4 className="mt-6 text-lg font-bold text-gray-800 dark:text-gray-100">{t('docs.features.sage.title')}</h4>
                         <p>
                             {t('docs.features.sage.intro')}
                         </p>
@@ -218,12 +218,12 @@ if (!isSage) {
 }`}
                         </CodeBlock>
 
-                        <h4 className="font-bold text-gray-800 mt-6 text-lg">{t('docs.features.anchor.title')}</h4>
+                        <h4 className="mt-6 text-lg font-bold text-gray-800 dark:text-gray-100">{t('docs.features.anchor.title')}</h4>
                         <p>
                             {t('docs.features.anchor.intro')}
                         </p>
 
-                        <h4 className="font-bold text-gray-800 mt-6 text-lg">{t('docs.features.moderation.title')}</h4>
+                        <h4 className="mt-6 text-lg font-bold text-gray-800 dark:text-gray-100">{t('docs.features.moderation.title')}</h4>
                         <p>
                             {t('docs.features.moderation.intro')}
                         </p>

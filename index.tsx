@@ -5,6 +5,7 @@ import App from './App';
 // Initialize i18n before rendering.
 import './i18n';
 import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from './components/theme-provider';
 
 // 应用挂载点：Vite 默认注入 #root。
 // App mount point: Vite injects #root by default.
@@ -16,8 +17,10 @@ if (!rootElement) throw new Error('Root not found');
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 );

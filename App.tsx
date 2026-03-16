@@ -9,6 +9,7 @@ import { ThreadView } from './components/ThreadDetail';
 import { Button } from './components/ui/button';
 import { DonateModal } from './components/DonateModal';
 import { Pagination } from './components/Pagination';
+import { ThemeSwitcher } from './components/ThemeSwitcher';
 
 import {
   AlertDialog,
@@ -168,13 +169,13 @@ const BoardView: React.FC<{
   }, [isMobile, hasMore, loading, currentPage]);
 
   const board = boards.find(b => b.id === boardId);
-  if (!board) return <div>Board not found</div>;
+  if (!board) return <div className="p-6 text-center text-gray-500 dark:text-gray-400">Board not found</div>;
   const isAll = boardId === 'all';
 
   const renderThreadCard = (thread: Thread, boardName: string) => {
     if (hiddenThreads.has(thread.id)) {
       return (
-        <div key={thread.id} className="bg-gray-50 p-3 rounded-sm border border-gray-200 flex justify-between items-center text-xs text-gray-500 shadow-sm">
+        <div key={thread.id} className="flex items-center justify-between rounded-sm border border-gray-200 bg-gray-50 p-3 text-xs text-gray-500 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
           <span className="font-bold">{t('meta.hidden_thread')}: {thread.title.substring(0, 30)}...</span>
           <button onClick={(e) => onToggleHide(e, thread.id)} className="text-[#0056b3] hover:underline">[{t('meta.show')}]</button>
         </div>
@@ -201,32 +202,32 @@ const BoardView: React.FC<{
     const isFollowed = followedThreads.has(thread.id);
 
     return (
-      <div key={thread.id} className="bg-white p-5 rounded-sm shadow-sm border border-gray-200 relative group">
-        <div className="absolute top-4 right-4 text-xs text-gray-400">
+      <div key={thread.id} className="relative group rounded-sm border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="absolute top-4 right-4 text-xs text-gray-400 dark:text-gray-500">
           {dateStr} <span className="ml-2">ID:{thread.opPost.uid}</span>
           <button onClick={(e) => onToggleHide(e, thread.id)} className="ml-2 text-[#0056b3] hover:underline">[{t('meta.hide')}]</button>
         </div>
         <div className="mt-1">
           <div className="mb-2 pr-40">
             <span
-              className="text-lg font-bold text-[#333] cursor-pointer hover:underline hover:text-[#0056b3]"
+              className="cursor-pointer text-lg font-bold text-[#333] hover:text-[#0056b3] hover:underline dark:text-gray-100 dark:hover:text-sky-300"
               onClick={() => onThreadClick(thread)}
             >
               {thread.title}
             </span>
           </div>
           <div
-            className="text-sm text-[#333] leading-relaxed mb-3 cursor-pointer"
+            className="mb-3 cursor-pointer text-sm leading-relaxed text-[#333] dark:text-gray-200"
             onClick={() => onThreadClick(thread)}
           >
             {thread.opPost.content.length > 200 ? thread.opPost.content.substring(0, 200) + '...' : thread.opPost.content}
           </div>
           <div className="mb-3">
-            <a className="text-[#0056b3] text-sm break-all hover:underline" href={`/board/${thread.boardId}/thread/${thread.id}`}>
+            <a className="bbs-link text-sm break-all" href={`/board/${thread.boardId}/thread/${thread.id}`}>
               https://7ch-web.vercel.app/board/{thread.boardId}/thread/{thread.id}/
             </a>
           </div>
-          <div className="flex items-center gap-4 text-xs font-bold text-gray-600">
+          <div className="flex items-center gap-4 text-xs font-bold text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1 text-[#0056b3]">
               <span>💬</span>
               <span>{thread.postCount}</span>
@@ -257,14 +258,14 @@ const BoardView: React.FC<{
   }) : threads;
 
   return (
-    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)]">
+    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)] dark:bg-background">
       <div className="max-w-4xl mx-auto py-6 px-2 sm:px-4">
         {!isAll && (
           <div className="mb-6 flex justify-center">
             {!showPostForm ? (
               <button
                 onClick={() => setShowPostForm(true)}
-                className="bg-white px-6 py-3 rounded shadow-sm border border-gray-300 text-[#333] font-bold hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                className="flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-3 font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
               >
                 <span className="text-xl text-[#2da0b3]">✏️</span>
                 {t('thread.new')}
@@ -308,7 +309,7 @@ const BoardView: React.FC<{
         {/* Mobile Mode: Infinite Scroll Trigger */}
         {isMobile && !search.trim() && (
           <div ref={loadMoreRef} className="py-4 text-center">
-            {loading && <span className="text-gray-500">{t('meta.loading')}...</span>}
+            {loading && <span className="text-gray-500 dark:text-gray-400">{t('meta.loading')}...</span>}
             {!loading && hasMore && (
               <button
                 onClick={() => {
@@ -316,13 +317,13 @@ const BoardView: React.FC<{
                   setCurrentPage(nextPage);
                   loadThreads(nextPage, true);
                 }}
-                className="text-[#0056b3] hover:underline"
+                className="text-[#0056b3] hover:underline dark:text-sky-300"
               >
                 {t('pagination.load_more')}
               </button>
             )}
             {!hasMore && threads.length > 0 && (
-              <div className="text-gray-500">{t('pagination.no_more')}</div>
+              <div className="text-gray-500 dark:text-gray-400">{t('pagination.no_more')}</div>
             )}
           </div>
         )}
@@ -377,7 +378,7 @@ const FavoritesView: React.FC<{
   const renderThreadCard = (thread: Thread, boardName: string) => {
     if (hiddenThreads.has(thread.id)) {
       return (
-        <div key={thread.id} className="bg-gray-50 p-3 rounded-sm border border-gray-200 flex justify-between items-center text-xs text-gray-500 shadow-sm">
+        <div key={thread.id} className="flex items-center justify-between rounded-sm border border-gray-200 bg-gray-50 p-3 text-xs text-gray-500 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
           <span className="font-bold">{t('meta.hidden_thread')}: {thread.title.substring(0, 30)}...</span>
           <button onClick={(e) => onToggleHide(e, thread.id)} className="text-[#0056b3] hover:underline">[{t('meta.show')}]</button>
         </div>
@@ -404,32 +405,32 @@ const FavoritesView: React.FC<{
     const isFollowed = followedThreads.has(thread.id);
 
     return (
-      <div key={thread.id} className="bg-white p-5 rounded-sm shadow-sm border border-gray-200 relative group">
-        <div className="absolute top-4 right-4 text-xs text-gray-400">
+      <div key={thread.id} className="relative group rounded-sm border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="absolute top-4 right-4 text-xs text-gray-400 dark:text-gray-500">
           {dateStr} <span className="ml-2">ID:{thread.opPost.uid}</span>
           <button onClick={(e) => onToggleHide(e, thread.id)} className="ml-2 text-[#0056b3] hover:underline">[{t('meta.hide')}]</button>
         </div>
         <div className="mt-1">
           <div className="mb-2 pr-40">
             <span
-              className="text-lg font-bold text-[#333] cursor-pointer hover:underline hover:text-[#0056b3]"
+              className="cursor-pointer text-lg font-bold text-[#333] hover:text-[#0056b3] hover:underline dark:text-gray-100 dark:hover:text-sky-300"
               onClick={() => onThreadClick(thread)}
             >
               {thread.title}
             </span>
           </div>
           <div
-            className="text-sm text-[#333] leading-relaxed mb-3 cursor-pointer"
+            className="mb-3 cursor-pointer text-sm leading-relaxed text-[#333] dark:text-gray-200"
             onClick={() => onThreadClick(thread)}
           >
             {thread.opPost.content.length > 200 ? thread.opPost.content.substring(0, 200) + '...' : thread.opPost.content}
           </div>
           <div className="mb-3">
-            <a className="text-[#0056b3] text-sm break-all hover:underline" href={`/board/${thread.boardId}/thread/${thread.id}`}>
+            <a className="bbs-link text-sm break-all" href={`/board/${thread.boardId}/thread/${thread.id}`}>
               https://7ch-web.vercel.app/board/{thread.boardId}/thread/{thread.id}/
             </a>
           </div>
-          <div className="flex items-center gap-4 text-xs font-bold text-gray-600">
+          <div className="flex items-center gap-4 text-xs font-bold text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1 text-[#0056b3]">
               <span>💬</span>
               <span>{thread.postCount}</span>
@@ -452,15 +453,15 @@ const FavoritesView: React.FC<{
   };
 
   return (
-    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)]">
+    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)] dark:bg-background">
       <div className="max-w-4xl mx-auto py-6 px-2 sm:px-4">
-        <div className="mb-4 text-xl font-bold text-gray-700 flex items-center gap-2">
+        <div className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-700 dark:text-gray-100">
           <span>★</span> {t('nav.favorites')}
         </div>
         {loadingFavs ? (
-          <div className="text-center text-gray-500 py-10">{t('meta.loading')}</div>
+          <div className="py-10 text-center text-gray-500 dark:text-gray-400">{t('meta.loading')}</div>
         ) : favThreads.length === 0 ? (
-          <div className="bg-white p-10 text-center text-gray-500 rounded border border-gray-200">
+          <div className="rounded border border-gray-200 bg-white p-10 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
             {t('meta.no_favorites')}
           </div>
         ) : (
@@ -493,7 +494,7 @@ const ThreadViewWrapper: React.FC<{
   if (!boardId || !threadId) return <div>Invalid thread</div>;
 
   return (
-    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)] pt-4">
+    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)] pt-4 dark:bg-background">
       <ThreadView
         threadId={threadId}
         onBack={() => navigate(`/board/${boardId}`)}
@@ -758,10 +759,10 @@ const App: React.FC = () => {
   // Split rendering into functions for clarity.
 
   const renderHeader = () => (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+    <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
-          <span className="text-xl sm:text-2xl font-bold text-gray-600 font-serif tracking-tight">7ちゃんねる</span>
+          <span className="text-xl sm:text-2xl font-bold text-gray-600 dark:text-gray-100 font-serif tracking-tight">7ちゃんねる</span>
         </div>
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center relative">
@@ -769,15 +770,15 @@ const App: React.FC = () => {
               ref={searchInputRef}
               type="text"
               placeholder={t('board.catalog')}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-1 text-sm w-48 focus:outline-none focus:border-gray-400 pr-8 transition-colors"
+              className="w-48 rounded border border-gray-300 bg-gray-100 px-3 py-1 pr-8 text-sm text-gray-800 transition-colors focus:border-gray-400 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:focus:border-gray-600"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <div className="absolute right-2 flex items-center gap-1 pointer-events-none">
-              <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 bg-gray-200 text-gray-500 border-gray-300">
+              <kbd className="hidden h-5 select-none items-center gap-1 rounded border border-gray-300 bg-gray-200 px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:inline-flex">
                 <span className="text-xs">⌘</span>K
               </kbd>
-              <Search className="text-gray-400 w-4 h-4" />
+              <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             </div>
           </div>
           {/* Desktop navigation - hidden on mobile */}
@@ -808,12 +809,13 @@ const App: React.FC = () => {
             >
               {t('nav.favorites')}
             </button>
-            <div className="border-l border-gray-300 pl-3 flex gap-2">
+            <div className="border-l border-gray-300 dark:border-gray-700 pl-3 flex gap-2">
+              <ThemeSwitcher compact />
               {['zh-CN', 'ja-JP'].map(l => (
                 <button
                   key={l}
                   onClick={() => changeLang(l)}
-                  className={`text-xs ${i18n.language === l ? 'font-bold text-black' : 'text-gray-400'}`}
+                  className={`text-xs ${i18n.language === l ? 'font-bold text-black dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}`}
                 >
                   {l === 'zh-CN' ? '中文' : '日'}
                 </button>
@@ -823,22 +825,22 @@ const App: React.FC = () => {
           {/* Mobile dropdown menu */}
           <div className="md:hidden relative">
             <button
-              className="text-[#0056b3] text-sm font-medium p-2"
+              className="p-2 text-sm font-medium text-[#0056b3] dark:text-sky-300"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
               ☰
             </button>
             {showMobileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50">
+              <div className="absolute right-0 z-50 mt-2 w-48 rounded border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
                 <div className="py-1">
                   <button
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
                     onClick={() => setShowMobileLoginDialog(true)}
                   >
                     {t('dialog.login.button')}
                   </button>
                   <button
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm border-t border-gray-200"
+                    className="block w-full border-t border-gray-200 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
                     onClick={() => {
                       navigate('/');
                       setShowMobileMenu(false);
@@ -847,7 +849,7 @@ const App: React.FC = () => {
                     {t('nav.boards')}
                   </button>
                   <button
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
                     onClick={() => {
                       navigate('/favorites');
                       setShowMobileMenu(false);
@@ -855,7 +857,13 @@ const App: React.FC = () => {
                   >
                     {t('nav.favorites')}
                   </button>
-                  <div className="border-t border-gray-200 pt-1">
+                  <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-3">
+                    <div className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      {t('theme.title')}
+                    </div>
+                    <ThemeSwitcher />
+                  </div>
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-1">
                     {['zh-CN', 'ja-JP'].map(l => (
                       <button
                         key={l}
@@ -863,7 +871,7 @@ const App: React.FC = () => {
                           changeLang(l);
                           setShowMobileMenu(false);
                         }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${i18n.language === l ? 'font-bold text-black' : 'text-gray-400'}`}
+                        className={`block w-full px-4 py-2 text-left text-sm ${i18n.language === l ? 'font-bold text-black dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}`}
                       >
                         {l === 'zh-CN' ? '中文' : '日'}
                       </button>
@@ -881,19 +889,19 @@ const App: React.FC = () => {
   const renderLiveNotices = () => (
     <>
       {showVersionUpdateNotice && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-900">
+        <div className="border-b border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
           <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center gap-3 text-sm">
             <span className="font-bold">{t('realtime.new_version')}</span>
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={handleVersionRefresh}
-                className="px-3 py-1 rounded border border-amber-300 text-amber-900 bg-amber-100 hover:bg-amber-200 transition-colors"
+                className="rounded border border-amber-300 bg-amber-100 px-3 py-1 text-amber-900 transition-colors hover:bg-amber-200 dark:border-amber-700 dark:bg-amber-900/60 dark:text-amber-100 dark:hover:bg-amber-900"
               >
                 {t('realtime.refresh_page')}
               </button>
               <button
                 onClick={handleVersionDismiss}
-                className="px-3 py-1 rounded border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors"
+                className="rounded border border-amber-200 px-3 py-1 text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:text-amber-200 dark:hover:bg-amber-900/50"
               >
                 {t('realtime.dismiss')}
               </button>
@@ -902,19 +910,19 @@ const App: React.FC = () => {
         </div>
       )}
       {showThreadUpdateNotice && (
-        <div className="bg-sky-50 border-b border-sky-200 text-sky-900">
+        <div className="border-b border-sky-200 bg-sky-50 text-sky-900 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200">
           <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center gap-3 text-sm">
             <span className="font-bold">{t('realtime.new_replies')}</span>
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={handleThreadRefresh}
-                className="px-3 py-1 rounded border border-sky-300 text-sky-900 bg-sky-100 hover:bg-sky-200 transition-colors"
+                className="rounded border border-sky-300 bg-sky-100 px-3 py-1 text-sky-900 transition-colors hover:bg-sky-200 dark:border-sky-700 dark:bg-sky-900/60 dark:text-sky-100 dark:hover:bg-sky-900"
               >
                 {t('realtime.load_replies')}
               </button>
               <button
                 onClick={() => setShowThreadUpdateNotice(false)}
-                className="px-3 py-1 rounded border border-sky-200 text-sky-700 hover:bg-sky-100 transition-colors"
+                className="rounded border border-sky-200 px-3 py-1 text-sky-700 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:text-sky-200 dark:hover:bg-sky-900/50"
               >
                 {t('realtime.dismiss')}
               </button>
@@ -923,19 +931,19 @@ const App: React.FC = () => {
         </div>
       )}
       {showBoardUpdateNotice && (
-        <div className="bg-blue-50 border-b border-blue-200 text-blue-900">
+        <div className="border-b border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-200">
           <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center gap-3 text-sm">
             <span className="font-bold">{t('realtime.new_content')}</span>
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={handleBoardRefresh}
-                className="px-3 py-1 rounded border border-blue-300 text-blue-900 bg-blue-100 hover:bg-blue-200 transition-colors"
+                className="rounded border border-blue-300 bg-blue-100 px-3 py-1 text-blue-900 transition-colors hover:bg-blue-200 dark:border-blue-700 dark:bg-blue-900/60 dark:text-blue-100 dark:hover:bg-blue-900"
               >
                 {t('realtime.refresh_list')}
               </button>
               <button
                 onClick={() => setShowBoardUpdateNotice(false)}
-                className="px-3 py-1 rounded border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors"
+                className="rounded border border-blue-200 px-3 py-1 text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-800 dark:text-blue-200 dark:hover:bg-blue-900/50"
               >
                 {t('realtime.dismiss')}
               </button>
@@ -947,30 +955,30 @@ const App: React.FC = () => {
   );
 
   const renderFooter = () => (
-    <footer className="mt-auto py-8 text-center text-sm text-gray-500 border-t border-gray-200 bg-white">
+    <footer className="mt-auto py-8 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-border bg-card">
       <div className="flex justify-center flex-wrap gap-4 sm:gap-6 mb-4">
-        <Link to="/privacy"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">{t('footer.privacy')}</button></Link>
-        <Link to="/docs"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">{t('footer.tech')}</button></Link>
-        <Link to="/terms"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">{t('footer.terms')}</button></Link>
-        <Link to="/help"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">{t('footer.help')}</button></Link>
-        <Link to="/QA"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">{t('footer.QA')}</button></Link>
-        <Link to="/changelog"><button className="text-gray-500 hover:underline hover:text-[#0056b3]">Changelog</button></Link>
+        <Link to="/privacy"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">{t('footer.privacy')}</button></Link>
+        <Link to="/docs"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">{t('footer.tech')}</button></Link>
+        <Link to="/terms"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">{t('footer.terms')}</button></Link>
+        <Link to="/help"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">{t('footer.help')}</button></Link>
+        <Link to="/QA"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">{t('footer.QA')}</button></Link>
+        <Link to="/changelog"><button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">Changelog</button></Link>
         <Link to="/tools/convert">
-          <button className="inline-flex items-center gap-2 text-gray-500 hover:underline hover:text-[#0056b3]">
+          <button className="inline-flex items-center gap-2 text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300">
             <span>{t('tools.convert.link')}</span>
-            <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+            <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:border-amber-700 dark:bg-amber-900/50 dark:text-amber-200">
               {t('tools.convert.badge')}
             </span>
           </button>
         </Link>
-        <button className="text-gray-500 hover:underline hover:text-[#0056b3]" onClick={() => setShowDonateModal(true)}>{t('footer.donate')}</button>
+        <button className="text-gray-500 hover:underline hover:text-[#0056b3] dark:text-gray-400 dark:hover:text-sky-300" onClick={() => setShowDonateModal(true)}>{t('footer.donate')}</button>
       </div>
       <div>&copy; 2024 7ch Project. All rights reserved.</div>
     </footer>
   );
 
   return (
-    <div className="min-h-screen font-sans bg-[#ffffff] text-[#333] flex flex-col">
+    <div className="min-h-screen font-sans bg-background text-foreground flex flex-col">
       {renderHeader()}
       {renderLiveNotices()}
       {/* Mobile Login Dialog - rendered outside main content to ensure proper layering */}

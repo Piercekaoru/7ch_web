@@ -70,14 +70,14 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
   };
 
   return (
-    <div className="bg-[#f0e0d6] p-4 border border-[#ccb] rounded shadow-sm max-w-2xl">
+    <div className="max-w-2xl rounded border border-[#ccb] bg-[#f0e0d6] p-4 shadow-sm dark:border-[#5d463e] dark:bg-[#2c211c]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         {isNewThread && (
           <div className="flex items-center">
-            <label className="w-20 text-sm font-bold text-[#800000]">{t('thread.title')}</label>
+            <label className="w-20 text-sm font-bold text-[#800000] dark:text-[#f0a6a6]">{t('thread.title')}</label>
             <input 
               type="text" 
-              className="flex-1 p-1 border border-gray-400 text-sm"
+              className="flex-1 border border-gray-400 bg-white p-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -86,10 +86,10 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         )}
         
         <div className="flex items-center">
-          <label className="w-20 text-sm font-bold text-[#800000]">{t('thread.name')}</label>
+          <label className="w-20 text-sm font-bold text-[#800000] dark:text-[#f0a6a6]">{t('thread.name')}</label>
           <input 
             type="text" 
-            className="flex-1 p-1 border border-gray-400 text-sm"
+            className="flex-1 border border-gray-400 bg-white p-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
             placeholder={t('meta.anonymous')}
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -97,10 +97,10 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         </div>
 
         <div className="flex items-center">
-          <label className="w-20 text-sm font-bold text-[#800000]">{t('thread.email')}</label>
+          <label className="w-20 text-sm font-bold text-[#800000] dark:text-[#f0a6a6]">{t('thread.email')}</label>
           <input 
             type="text" 
-            className="flex-1 p-1 border border-gray-400 text-sm"
+            className="flex-1 border border-gray-400 bg-white p-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
             placeholder="sage"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -108,9 +108,9 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         </div>
 
         <div className="flex items-start">
-          <label className="w-20 text-sm font-bold text-[#800000] mt-1">{t('thread.content')}</label>
+          <label className="mt-1 w-20 text-sm font-bold text-[#800000] dark:text-[#f0a6a6]">{t('thread.content')}</label>
           <textarea 
-            className="flex-1 p-1 border border-gray-400 text-sm font-mono h-32"
+            className="h-32 flex-1 border border-gray-400 bg-white p-1 text-sm font-mono text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
@@ -121,7 +121,7 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
             <button 
               type="button" 
               onClick={onCancel}
-              className="px-4 py-1 bg-gray-200 border border-gray-400 text-sm hover:bg-gray-300"
+              className="border border-gray-400 bg-gray-200 px-4 py-1 text-sm text-gray-800 hover:bg-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
             >
               {t('thread.return')}
             </button>
@@ -129,7 +129,7 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="px-6 py-1 bg-[#dddddd] border border-gray-400 text-sm font-bold hover:bg-white active:bg-gray-300 disabled:opacity-50"
+            className="border border-gray-400 bg-[#dddddd] px-6 py-1 text-sm font-bold text-gray-800 hover:bg-white active:bg-gray-300 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
           >
             {isSubmitting ? t('meta.loading') : isNewThread ? t('thread.new') : t('thread.submit')}
           </button>

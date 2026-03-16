@@ -7,10 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>7ちゃんねる</title>
     <link rel="canonical" href="https://7ch.net/" />
-<link rel="stylesheet" href="/index.css">
-</head>
+    <link rel="stylesheet" href="/index.css">
+    <script>
+      (function () {
+        var storageKey = '7ch_theme';
+        var root = document.documentElement;
+        var stored = localStorage.getItem(storageKey);
+        var theme = stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'light';
+        var resolved = theme === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme;
+        root.classList.toggle('dark', resolved === 'dark');
+        root.dataset.theme = theme;
+        root.style.colorScheme = resolved;
+      })();
+    </script>
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

@@ -44,13 +44,13 @@ export const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages,
                     onClick={() => onPageChange(p)}
                     className={`px-3 py-1.5 text-sm border transition-colors ${p === currentPage
                             ? 'bg-[#0056b3] text-white border-[#0056b3] font-bold'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800'
                         }`}
                 >
                     {p}
                 </button>
             ) : (
-                <span key={i} className="px-2 text-gray-400">
+                <span key={i} className="px-2 text-gray-400 dark:text-gray-500">
                     ...
                 </span>
             )
@@ -62,7 +62,7 @@ export const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages,
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-1.5 text-sm border border-gray-300 bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                className="px-4 py-1.5 text-sm border border-gray-300 bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
             >
                 {t('pagination.prev')}
             </button>
@@ -72,12 +72,12 @@ export const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages,
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-4 py-1.5 text-sm border border-gray-300 bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                className="px-4 py-1.5 text-sm border border-gray-300 bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
             >
                 {t('pagination.next')}
             </button>
 
-            <span className="ml-4 text-sm text-gray-600 hidden sm:inline">
+            <span className="ml-4 hidden text-sm text-gray-600 dark:text-gray-400 sm:inline">
                 {t('pagination.info', { current: currentPage, total: totalPages })}
             </span>
         </div>
