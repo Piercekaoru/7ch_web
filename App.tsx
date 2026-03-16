@@ -30,10 +30,23 @@ import { QA } from './pages/QA';
 import { Changelog } from './pages/Changelog';
 import { ServicePaused } from './pages/ServicePaused';
 import { SubscriptionConvert } from './pages/SubscriptionConvert';
+import { CommonLinks } from './pages/CommonLinks';
 import { buildServicePausedPath, isServicePausedCandidateError } from './lib/servicePause';
+import { commonLinksBoard } from './data/commonLinks';
 
 // 应用入口：路由、全局状态、SSE 通知、以及主要布局。
 // App entry: routing, global state, SSE notices, and overall layout.
+
+const STATIC_BOARDS: Board[] = [commonLinksBoard];
+
+const mergeBoardsWithStatic = (sourceBoards: Board[]) => {
+  const seen = new Set<string>();
+  return [...sourceBoards, ...STATIC_BOARDS].filter((board) => {
+    if (seen.has(board.id)) return false;
+    seen.add(board.id);
+    return true;
+  });
+};
 
 // --- Board View Component ---
 // 看板列表页：负责分页、搜索过滤、移动端无限滚动。
@@ -678,20 +691,20 @@ const App: React.FC = () => {
 
   useEffect(() => {
     api.getBoards()
-      .then(setBoards)
+      .then((data) => setBoards(mergeBoardsWithStatic(data)))
       .catch((e: any) => {
         if (isServicePausedCandidateError(e)) {
           navigate(buildServicePausedPath(`${location.pathname}${location.search}`));
           return;
         }
         setBoardsError(String(e?.message ?? e) || '加载失败');
-        setBoards([
+        setBoards(mergeBoardsWithStatic([
           { id: 'all', name: 'board.all.name', description: 'board.all.desc' },
           { id: 'news', name: 'board.news.name', description: 'board.news.desc' },
           { id: 'g', name: 'board.g.name', description: 'board.g.desc' },
           { id: 'acg', name: 'board.acg.name', description: 'board.acg.desc' },
           { id: 'vip', name: 'board.vip.name', description: 'board.vip.desc' },
-        ]);
+        ]));
       });
   }, []);
 
@@ -1007,15 +1020,15 @@ const App: React.FC = () => {
         <Routes>
           {/* 首页 - 看板列表 */}
           <Route path="/" element={
-            <div className="p-4 max-w-4xl mx-auto mt-4">
-              <div className="bg-white p-6 border border-gray-200 rounded-sm shadow-sm">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">{t('nav.boards')}</h2>
+            <div className="mx-auto mt-4 max-w-4xl p-4">
+              <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                <h2 className="mb-6 border-b pb-2 text-xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-100">{t('nav.boards')}</h2>
                 {boardsError && (
-                  <div className="mb-4 p-3 rounded border border-red-200 bg-red-100 text-red-700">
+                  <div className="mb-4 rounded border border-red-200 bg-red-100 p-3 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
                     {t('meta.loading')}: {boardsError}
                   </div>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {(search.trim() ? boards.filter(b => {
                     const s = search.trim().toLowerCase();
                     const name = `${b.id} ${t(b.name)} ${t(b.description)}`.toLowerCase();
@@ -1024,16 +1037,25 @@ const App: React.FC = () => {
                     <div
                       key={b.id}
                       onClick={() => navigate(`/board/${b.id}`)}
-                      className="p-4 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="cursor-pointer rounded border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/70"
                     >
-                      <div className="font-bold text-[#0056b3] text-lg mb-1">/{b.id}/ - {t(b.name)}</div>
-                      <div className="text-sm text-gray-500">{t(b.description)}</div>
+                      <div className="mb-1 flex items-center gap-2">
+                        <div className="text-lg font-bold text-[#0056b3]">/{b.id}/ - {t(b.name)}</div>
+                        {b.id === commonLinksBoard.id && (
+                          <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:border-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
+                            {t('commonLinks.staticBadge')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{t(b.description)}</div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           } />
+
+          <Route path="/board/links" element={<CommonLinks onBack={() => navigate('/')} />} />
 
           {/* 看板详情页 */}
           <Route path="/board/:boardId" element={
