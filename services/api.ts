@@ -12,15 +12,27 @@ import {
   Thread,
   ThreadDetail,
 } from "../types";
+import { ServicePausedCandidateError } from "../lib/servicePause";
 import { mockApi } from "./mockService";
 
 // 真实 API 实现：集中处理 fetch/JSON/错误与缓存策略。
 // Real API implementation: centralizes fetch/JSON/error handling and cache policy.
 
+const REQUEST_TIMEOUT_MS = 9000;
+const forceServicePaused = ((import.meta.env.VITE_FORCE_SERVICE_PAUSED as string | undefined) ?? "false") === "true";
+
 class RealService implements I7chAPI {
   constructor(private readonly baseUrl: string) { }
 
   private async request<T>(path: string, init?: RequestInit): Promise<T> {
+    if (forceServicePaused) {
+      throw new ServicePausedCandidateError("Service paused (forced by VITE_FORCE_SERVICE_PAUSED)", {
+        kind: "server",
+        path,
+        status: 503,
+      });
+    }
+
     // 若携带 body 且未指定 Content-Type，则默认 JSON。
     // If body exists and Content-Type is missing, assume JSON.
     const headers = new Headers(init?.headers);
@@ -28,13 +40,33 @@ class RealService implements I7chAPI {
       headers.set("Content-Type", "application/json");
     }
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    let res: Response;
+
     // 统一禁用缓存，确保列表与实时状态尽量新。
     // Disable cache to keep lists and realtime state fresh.
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      ...init,
-      headers,
-      cache: "no-store",
-    });
+    try {
+      res = await fetch(`${this.baseUrl}${path}`, {
+        ...init,
+        headers,
+        cache: "no-store",
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new ServicePausedCandidateError("Request timed out", {
+          kind: "timeout",
+          path,
+        });
+      }
+      throw new ServicePausedCandidateError("Network request failed", {
+        kind: "network",
+        path,
+      });
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
 
     if (!res.ok) {
       let message = `Request failed: ${res.status} ${res.statusText}`;
@@ -49,10 +81,25 @@ class RealService implements I7chAPI {
           // Keep fallback message when body is not valid JSON.
         }
       }
+      if (res.status >= 500) {
+        throw new ServicePausedCandidateError(message, {
+          kind: "server",
+          path,
+          status: res.status,
+        });
+      }
       throw new Error(message);
     }
 
-    return res.json() as Promise<T>;
+    try {
+      return await res.json() as T;
+    } catch {
+      throw new ServicePausedCandidateError("Received invalid server response", {
+        kind: "invalid_response",
+        path,
+        status: res.status,
+      });
+    }
   }
 
   getBoards(): Promise<Board[]> {

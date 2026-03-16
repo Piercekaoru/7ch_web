@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { buildServicePausedPath, isServicePausedCandidateError } from '../lib/servicePause';
 import { CreatePostRequest, CreateThreadRequest } from '../types';
 
 // 发帖/回帖表单：同一组件兼顾新线程与回复。
@@ -13,6 +15,7 @@ interface PostFormProps {
 
 export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit, onCancel }) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [name, setName] = useState('');
@@ -56,6 +59,10 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         setContent('');
       }
     } catch (err) {
+      if (isServicePausedCandidateError(err)) {
+        window.location.assign(buildServicePausedPath(`${location.pathname}${location.search}`));
+        return;
+      }
       console.error(err);
     } finally {
       setIsSubmitting(false);

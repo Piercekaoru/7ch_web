@@ -27,7 +27,9 @@ import { Terms } from './pages/Terms';
 import { Help } from './pages/Help';
 import { QA } from './pages/QA';
 import { Changelog } from './pages/Changelog';
+import { ServicePaused } from './pages/ServicePaused';
 import { SubscriptionConvert } from './pages/SubscriptionConvert';
+import { buildServicePausedPath, isServicePausedCandidateError } from './lib/servicePause';
 
 // 应用入口：路由、全局状态、SSE 通知、以及主要布局。
 // App entry: routing, global state, SSE notices, and overall layout.
@@ -47,6 +49,8 @@ const BoardView: React.FC<{
   refreshToken: number;
 }> = ({ boards, search, onCreateThread, onThreadClick, onToggleHide, onToggleFollow, hiddenThreads, followedThreads, refreshToken }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { boardId } = useParams();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [showPostForm, setShowPostForm] = useState(false);
@@ -96,6 +100,10 @@ const BoardView: React.FC<{
       setTotalPages(data.totalPages);
       setHasMore(page < data.totalPages);
     } catch (error) {
+      if (isServicePausedCandidateError(error)) {
+        navigate(buildServicePausedPath(`${location.pathname}${location.search}`));
+        return;
+      }
       console.error('Failed to load threads:', error);
     } finally {
       setLoading(false);
@@ -335,6 +343,8 @@ const FavoritesView: React.FC<{
   hiddenThreads: Set<string>;
 }> = ({ followedThreads, boards, onThreadClick, onToggleHide, onToggleFollow, hiddenThreads }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [favThreads, setFavThreads] = useState<Thread[]>([]);
   const [loadingFavs, setLoadingFavs] = useState(false);
 
@@ -343,10 +353,18 @@ const FavoritesView: React.FC<{
       setLoadingFavs(true);
       try {
         const ids = Array.from(followedThreads);
-        const results = await Promise.all(
-          ids.map(id => api.getThreadContent(id).catch(() => null))
+        const results = await Promise.allSettled(ids.map(id => api.getThreadContent(id)));
+        const validThreads = results
+          .filter((result): result is PromiseFulfilledResult<Thread> => result.status === 'fulfilled')
+          .map(result => result.value);
+        const hasServicePauseFailure = results.some(
+          (result) =>
+            result.status === 'rejected' && isServicePausedCandidateError(result.reason)
         );
-        const validThreads = results.filter((t): t is Thread => t !== null);
+        if (ids.length > 0 && hasServicePauseFailure && validThreads.length === 0) {
+          navigate(buildServicePausedPath(`${location.pathname}${location.search}`));
+          return;
+        }
         validThreads.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
         setFavThreads(validThreads);
       } finally {
@@ -661,6 +679,10 @@ const App: React.FC = () => {
     api.getBoards()
       .then(setBoards)
       .catch((e: any) => {
+        if (isServicePausedCandidateError(e)) {
+          navigate(buildServicePausedPath(`${location.pathname}${location.search}`));
+          return;
+        }
         setBoardsError(String(e?.message ?? e) || '加载失败');
         setBoards([
           { id: 'all', name: 'board.all.name', description: 'board.all.desc' },
@@ -1038,6 +1060,7 @@ const App: React.FC = () => {
           } />
 
           {/* 文档页面 */}
+          <Route path="/service-paused" element={<ServicePaused />} />
           <Route path="/docs" element={<Docs onBack={() => navigate('/')} />} />
           <Route path="/privacy" element={<PrivacyPolicy onBack={() => navigate('/')} />} />
           <Route path="/terms" element={<Terms onBack={() => navigate('/')} />} />

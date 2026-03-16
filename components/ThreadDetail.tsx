@@ -5,6 +5,8 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { buildServicePausedPath, isServicePausedCandidateError } from '../lib/servicePause';
 import { api } from '../services/api';
 import { ThreadDetail, Post } from '../types';
 import { PostForm } from './PostForm';
@@ -263,6 +265,8 @@ interface ThreadViewProps {
 
 export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFollowed, onToggleFollow, refreshToken, enablePolling }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState<ThreadDetail | null>(null);
   const [formKey, setFormKey] = useState(0);
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -272,6 +276,10 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
       const res = await api.getThreadContent(threadId);
       setData(res);
     } catch (e) {
+      if (isServicePausedCandidateError(e)) {
+        navigate(buildServicePausedPath(`${location.pathname}${location.search}`));
+        return;
+      }
       console.error(e);
     }
   };
