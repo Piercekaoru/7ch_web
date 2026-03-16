@@ -11,6 +11,8 @@ export const changelogData: ChangelogEntry[] = [
     "title": "Update 2026-03-16",
     "version": "build-20260316",
     "changes": [
+      "[Frontend] chore: update changelog and service paused page",
+      "[Frontend] chore: mark subscription convert as unfinished",
       "[Frontend] feat: add service paused fallback page"
     ]
   },
