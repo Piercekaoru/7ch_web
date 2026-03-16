@@ -11,6 +11,7 @@ export const changelogData: ChangelogEntry[] = [
     "title": "Update 2026-03-16",
     "version": "build-20260316",
     "changes": [
+      "[Frontend] feat: add common links board",
       "[Frontend] feat: expand service paused page",
       "[Frontend] feat: refine mobile theme switcher",
       "[Frontend] feat: add dark mode support",

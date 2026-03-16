@@ -30,7 +30,7 @@ import { QA } from './pages/QA';
 import { Changelog } from './pages/Changelog';
 import { ServicePaused } from './pages/ServicePaused';
 import { SubscriptionConvert } from './pages/SubscriptionConvert';
-import { CommonLinks } from './pages/CommonLinks';
+import { CommonLinksBoard, CommonLinkDetail } from './pages/CommonLinks';
 import { buildServicePausedPath, isServicePausedCandidateError } from './lib/servicePause';
 import { commonLinksBoard } from './data/commonLinks';
 
@@ -1055,7 +1055,8 @@ const App: React.FC = () => {
             </div>
           } />
 
-          <Route path="/board/links" element={<CommonLinks onBack={() => navigate('/')} />} />
+          <Route path="/board/links" element={<CommonLinksBoard search={search} onBack={() => navigate('/')} />} />
+          <Route path="/board/links/thread/:linkId" element={<CommonLinkDetail onBack={() => navigate('/board/links')} />} />
 
           {/* 看板详情页 */}
           <Route path="/board/:boardId" element={

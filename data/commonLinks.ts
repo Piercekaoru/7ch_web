@@ -10,9 +10,16 @@ export const commonLinksBoard: Board = {
 
 export interface CommonLinkItem {
   id: string;
+  boardId: string;
   href: string;
   repoHref?: string;
   title: string;
+  descriptionKey: string;
+  bestForTitleKey: string;
+  bestForBodyKey: string;
+  featureKeyPrefixes: string[];
+  tagKeys: string[];
+  updatedAt: string;
 }
 
 // 常用链接：目前先收录 cobalt.tools，后续可继续追加。
@@ -20,8 +27,22 @@ export interface CommonLinkItem {
 export const commonLinks: CommonLinkItem[] = [
   {
     id: 'cobalt',
+    boardId: commonLinksBoard.id,
     href: 'https://cobalt.tools',
     repoHref: 'https://github.com/imputnet/cobalt',
     title: 'cobalt.tools',
+    descriptionKey: 'commonLinks.cobalt.description',
+    bestForTitleKey: 'commonLinks.cobalt.bestForTitle',
+    bestForBodyKey: 'commonLinks.cobalt.bestForBody',
+    featureKeyPrefixes: [
+      'commonLinks.cobalt.featurePaste',
+      'commonLinks.cobalt.featureClean',
+      'commonLinks.cobalt.featurePrivacy',
+    ],
+    tagKeys: ['commonLinks.featured', 'commonLinks.external'],
+    updatedAt: '2026-03-16T00:00:00.000Z',
   },
 ];
+
+export const getCommonLinkById = (id: string) =>
+  commonLinks.find((item) => item.id === id) ?? null;
