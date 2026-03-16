@@ -7,6 +7,33 @@ export interface ChangelogEntry {
 
 export const changelogData: ChangelogEntry[] = [
   {
+    "date": "Mar 16, 2026",
+    "title": "Update 2026-03-16",
+    "version": "build-20260316",
+    "changes": [
+      "[Frontend] feat: add service paused fallback page"
+    ]
+  },
+  {
+    "date": "Mar 10, 2026",
+    "title": "Update 2026-03-10",
+    "version": "build-20260310",
+    "changes": [
+      "[Backend] refactor: split sub_converter module"
+    ]
+  },
+  {
+    "date": "Feb 23, 2026",
+    "title": "Update 2026-02-23",
+    "version": "build-20260223",
+    "changes": [
+      "[Frontend] chore: update frontend changelog and ignore rules",
+      "[Frontend] feat: add subscription convert page and secure link flow",
+      "[Backend] fix: improve ios profile compatibility and logging",
+      "[Backend] feat: add native converter and secure subscription links"
+    ]
+  },
+  {
     "date": "Feb 17, 2026",
     "title": "Update 2026-02-17",
     "version": "build-20260217",

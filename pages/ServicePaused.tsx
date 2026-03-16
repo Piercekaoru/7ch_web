@@ -28,87 +28,62 @@ export const ServicePaused: React.FC = () => {
   );
 
   return (
-    <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f8f5ee_0%,#f2f2ef_44%,#e9edf1_100%)] min-h-[calc(100vh-3.5rem)]">
-      <div className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="absolute left-[-8rem] top-12 h-52 w-52 rounded-full bg-[#b8d8df] blur-3xl" />
-        <div className="absolute right-[-4rem] top-32 h-56 w-56 rounded-full bg-[#f3cf9c] blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-44 w-[28rem] -translate-x-1/2 rounded-full bg-[#d3dde8] blur-3xl" />
-      </div>
+    <div className="bg-[#f0f0f0] min-h-[calc(100vh-3.5rem)] py-12 px-4 flex justify-center">
+      <div className="w-full max-w-3xl">
+        <div className="bg-white p-6 sm:p-10 border border-gray-200 shadow-sm rounded-sm">
+          <div className="mb-6 pb-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+              {t('servicePause.title')}
+            </h1>
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10 h-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+              {t('servicePause.badge')}
+            </span>
+          </div>
 
-      <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
-        <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[#9bb4c7] bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#c85a54]" />
-          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-[#4a6075]">
-            {t('servicePause.badge')}
-          </span>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
-          <section className="overflow-hidden rounded-3xl border border-[#d7d7d2] bg-white/90 shadow-[0_24px_60px_rgba(76,92,112,0.12)] backdrop-blur">
-            <div className="border-b border-dashed border-[#d8d4cb] bg-[#f7f1e7] px-6 py-5 sm:px-8">
-              <div className="font-mono text-xs uppercase tracking-[0.3em] text-[#7e6c57]">
-                Monthly Availability Notice
-              </div>
+          <div className="space-y-4 text-[15px] leading-relaxed text-gray-700 mb-8">
+            <p className="font-medium text-gray-900">{t('servicePause.lead')}</p>
+            <p>{t('servicePause.body')}</p>
+            <div className="text-sm bg-[#fff8e1] p-3 rounded border border-[#ffe082] text-[#8d6e63]">
+              <span className="font-bold block mb-1">{t('servicePause.noteTitle')}</span>
+              {t('servicePause.noteBody')}
             </div>
+          </div>
 
-            <div className="px-6 py-7 sm:px-8 sm:py-9">
-              <h1 className="max-w-2xl text-3xl font-bold leading-tight text-[#26374a] sm:text-4xl">
-                {t('servicePause.title')}
-              </h1>
-
-              <div className="mt-6 space-y-4 text-[15px] leading-7 text-[#475569] sm:text-base">
-                <p>{t('servicePause.lead')}</p>
-                <p>{t('servicePause.body')}</p>
-              </div>
-
-              {retryPath !== '/' && (
-                <div className="mt-6 rounded-2xl border border-[#d8e0e7] bg-[#f7fafc] px-4 py-3 text-sm text-[#506172]">
-                  <div className="font-medium text-[#334155]">{t('servicePause.returnTitle')}</div>
-                  <div className="mt-1 break-all font-mono text-[12px] text-[#64748b]">{retryPath}</div>
-                </div>
-              )}
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => window.location.assign(retryPath)}
-                  className="rounded-full bg-[#234b67] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1c3d53]"
-                >
-                  {t('servicePause.retry')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/')}
-                  className="rounded-full border border-[#cbd5df] bg-white px-5 py-2.5 text-sm font-bold text-[#3a4d5f] transition-colors hover:bg-[#f7fafc]"
-                >
-                  {t('servicePause.home')}
-                </button>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="bg-gray-50 border border-gray-200 rounded p-4">
+              <div className="text-xs font-bold text-gray-500 mb-1">{t('servicePause.recoveryLabel')}</div>
+              <div className="text-lg font-bold text-[#0056b3]">{nextRecoveryDate}</div>
+              <div className="text-xs text-gray-500 mt-1">{t('servicePause.recoveryBody')}</div>
             </div>
-          </section>
-
-          <aside className="space-y-4">
-            <div className="rounded-3xl border border-[#d7d7d2] bg-white/90 p-6 shadow-[0_18px_40px_rgba(76,92,112,0.1)] backdrop-blur">
-              <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#7c8ea1]">
-                {t('servicePause.recoveryLabel')}
-              </div>
-              <div className="mt-4 text-3xl font-bold text-[#234b67]">{nextRecoveryDate}</div>
-              <p className="mt-3 text-sm leading-6 text-[#526273]">{t('servicePause.recoveryBody')}</p>
+            <div className="bg-gray-50 border border-gray-200 rounded p-4">
+              <div className="text-xs font-bold text-gray-500 mb-1">{t('servicePause.windowLabel')}</div>
+              <div className="text-lg font-bold text-gray-700">{t('servicePause.windowValue')}</div>
+              <div className="text-xs text-gray-500 mt-1">{t('servicePause.windowBody')}</div>
             </div>
+          </div>
 
-            <div className="rounded-3xl border border-[#d7d7d2] bg-[#f8fafb] p-6 shadow-[0_18px_40px_rgba(76,92,112,0.08)]">
-              <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#7c8ea1]">
-                {t('servicePause.windowLabel')}
-              </div>
-              <div className="mt-4 text-2xl font-bold text-[#2b475e]">{t('servicePause.windowValue')}</div>
-              <p className="mt-3 text-sm leading-6 text-[#526273]">{t('servicePause.windowBody')}</p>
+          {retryPath !== '/' && (
+            <div className="mb-8 p-3 bg-blue-50 border border-blue-100 rounded text-sm text-blue-800">
+              <span className="font-bold mr-2">{t('servicePause.returnTitle')}</span>
+              <code className="text-xs break-all bg-white px-1 py-0.5 rounded border border-blue-200">{retryPath}</code>
             </div>
+          )}
 
-            <div className="rounded-3xl border border-dashed border-[#d8cfbe] bg-[#fcf8ef] p-6">
-              <div className="font-bold text-[#6d5f4b]">{t('servicePause.noteTitle')}</div>
-              <p className="mt-2 text-sm leading-6 text-[#6c6257]">{t('servicePause.noteBody')}</p>
-            </div>
-          </aside>
+          <div className="pt-6 border-t border-gray-200 flex gap-3 flex-wrap">
+            <button
+              onClick={() => window.location.assign(retryPath)}
+              className="bg-[#2da0b3] hover:bg-[#238a9b] text-white px-6 py-2 rounded-sm text-sm font-bold transition-colors shadow-sm"
+            >
+              {t('servicePause.retry')}
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-2 rounded-sm text-sm font-bold transition-colors shadow-sm"
+            >
+              {t('servicePause.home')}
+            </button>
+          </div>
         </div>
       </div>
     </div>
