@@ -22,8 +22,8 @@ export interface CommonLinkItem {
   updatedAt: string;
 }
 
-// 常用链接：目前先收录 cobalt.tools，后续可继续追加。
-// Common links catalog: starts with cobalt.tools and can grow later.
+// 常用链接：静态整理的外部资源列表，可按需继续追加。
+// Common links catalog: a static collection of external resources that can grow over time.
 export const commonLinks: CommonLinkItem[] = [
   {
     id: 'cobalt',
@@ -41,6 +41,22 @@ export const commonLinks: CommonLinkItem[] = [
     ],
     tagKeys: ['commonLinks.featured', 'commonLinks.external'],
     updatedAt: '2026-03-16T00:00:00.000Z',
+  },
+  {
+    id: 'rustcc',
+    boardId: commonLinksBoard.id,
+    href: 'https://rustcc.cn/section?id=fed6b7de-0a74-48eb-8988-1978858c9b35',
+    title: 'rustcc.cn',
+    descriptionKey: 'commonLinks.rustcc.description',
+    bestForTitleKey: 'commonLinks.rustcc.bestForTitle',
+    bestForBodyKey: 'commonLinks.rustcc.bestForBody',
+    featureKeyPrefixes: [
+      'commonLinks.rustcc.featureCommunity',
+      'commonLinks.rustcc.featureKnowledge',
+      'commonLinks.rustcc.featureDiscussion',
+    ],
+    tagKeys: ['commonLinks.featured', 'commonLinks.external'],
+    updatedAt: '2026-03-21T00:00:00.000Z',
   },
 ];
 
