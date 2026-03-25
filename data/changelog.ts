@@ -11,6 +11,7 @@ export const changelogData: ChangelogEntry[] = [
     "title": "Update 2026-03-25",
     "version": "build-20260325",
     "changes": [
+      "[Frontend] fix: unify frontend error notice styling",
       "[Frontend] fix: narrow service pause redirect handling",
       "[Backend] fix: flush view counts to active databases",
       "[Backend] feat: add automatic database failback"
@@ -251,14 +252,6 @@ export const changelogData: ChangelogEntry[] = [
       "[Frontend] perf(api): disable caching with no-store for fetch",
       "[Frontend] chore(repo): initial frontend import",
       "[Backend] feat(api): add rate limiting middleware"
-    ]
-  },
-  {
-    "date": "Jan 28, 2026",
-    "title": "Update 2026-01-28",
-    "version": "build-20260128",
-    "changes": [
-      "[Frontend] Add routing support and static pages (QA, Docs, Privacy, Terms, Help)"
     ]
   }
 ];

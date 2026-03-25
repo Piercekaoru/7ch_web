@@ -705,24 +705,30 @@ const App: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileLoginDialog, setShowMobileLoginDialog] = useState(false);
 
+  const loadBoards = async () => {
+    setBoardsError(null);
+    try {
+      const data = await api.getBoards();
+      setBoards(mergeBoardsWithStatic(data));
+    } catch (e: any) {
+      const redirectPath = buildKnownErrorRedirectPath(e, `${location.pathname}${location.search}`);
+      if (redirectPath) {
+        navigate(redirectPath);
+        return;
+      }
+      setBoardsError(getDisplayErrorMessage(e, t));
+      setBoards(mergeBoardsWithStatic([
+        { id: 'all', name: 'board.all.name', description: 'board.all.desc' },
+        { id: 'news', name: 'board.news.name', description: 'board.news.desc' },
+        { id: 'g', name: 'board.g.name', description: 'board.g.desc' },
+        { id: 'acg', name: 'board.acg.name', description: 'board.acg.desc' },
+        { id: 'vip', name: 'board.vip.name', description: 'board.vip.desc' },
+      ]));
+    }
+  };
+
   useEffect(() => {
-    api.getBoards()
-      .then((data) => setBoards(mergeBoardsWithStatic(data)))
-      .catch((e: any) => {
-        const redirectPath = buildKnownErrorRedirectPath(e, `${location.pathname}${location.search}`);
-        if (redirectPath) {
-          navigate(redirectPath);
-          return;
-        }
-        setBoardsError(getDisplayErrorMessage(e, t));
-        setBoards(mergeBoardsWithStatic([
-          { id: 'all', name: 'board.all.name', description: 'board.all.desc' },
-          { id: 'news', name: 'board.news.name', description: 'board.news.desc' },
-          { id: 'g', name: 'board.g.name', description: 'board.g.desc' },
-          { id: 'acg', name: 'board.acg.name', description: 'board.acg.desc' },
-          { id: 'vip', name: 'board.vip.name', description: 'board.vip.desc' },
-        ]));
-      });
+    void loadBoards();
   }, []);
 
   const changeLang = (lng: string) => {
@@ -1007,6 +1013,59 @@ const App: React.FC = () => {
     </footer>
   );
 
+  const renderBoardsErrorState = () => (
+    <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-10">
+      <div className="mb-6 flex flex-col justify-between gap-4 border-b border-gray-200 pb-4 dark:border-gray-700 sm:flex-row sm:items-center">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 sm:text-2xl">
+          {t('error.loadBoardsTitle')}
+        </h2>
+        <span className="inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/50 dark:text-amber-200 dark:ring-amber-800/40">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+          {t('error.loadBoardsBadge')}
+        </span>
+      </div>
+
+      <div className="mb-8 space-y-4 text-[15px] leading-relaxed text-gray-700 dark:text-gray-300">
+        <p className="font-medium text-gray-900 dark:text-gray-100">{t('error.loadBoardsLead')}</p>
+        <p>{boardsError}</p>
+        <div className="rounded border border-sky-100 bg-sky-50 p-3 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-200">
+          <span className="mb-1 block font-bold">{t('error.loadBoardsNoteTitle')}</span>
+          {t('error.loadBoardsNoteBody')}
+        </div>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/70">
+          <div className="mb-1 text-xs font-bold text-gray-500 dark:text-gray-400">{t('error.loadBoardsActionLabel')}</div>
+          <div className="text-lg font-bold text-amber-700 dark:text-amber-300">{t('error.loadBoardsActionValue')}</div>
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t('error.loadBoardsActionBody')}</div>
+        </div>
+        <div className="rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/70">
+          <div className="mb-1 text-xs font-bold text-gray-500 dark:text-gray-400">{t('error.loadBoardsCauseLabel')}</div>
+          <div className="text-lg font-bold text-gray-700 dark:text-gray-100">{t('error.loadBoardsCauseValue')}</div>
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t('error.loadBoardsCauseBody')}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
+        <button
+          type="button"
+          onClick={() => void loadBoards()}
+          className="rounded-sm bg-[#2da0b3] px-6 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#238a9b]"
+        >
+          {t('servicePause.retry')}
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="rounded-sm border border-gray-300 bg-white px-6 py-2 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+        >
+          {t('servicePause.home')}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen font-sans bg-background text-foreground flex flex-col">
       {renderHeader()}
@@ -1038,39 +1097,34 @@ const App: React.FC = () => {
           {/* 首页 - 看板列表 */}
           <Route path="/" element={
             <div className="mx-auto mt-4 max-w-4xl p-4">
-              <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <h2 className="mb-6 border-b pb-2 text-xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-100">{t('nav.boards')}</h2>
-                {boardsError && (
-                  <InlineErrorNotice
-                    title={t('error.loadBoardsTitle')}
-                    message={boardsError}
-                    className="mb-4"
-                  />
-                )}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {(search.trim() ? boards.filter(b => {
-                    const s = search.trim().toLowerCase();
-                    const name = `${b.id} ${t(b.name)} ${t(b.description)}`.toLowerCase();
-                    return name.includes(s);
-                  }) : boards).map(b => (
-                    <div
-                      key={b.id}
-                      onClick={() => navigate(`/board/${b.id}`)}
-                      className="cursor-pointer rounded border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/70"
-                    >
-                      <div className="mb-1 flex items-center gap-2">
-                        <div className="text-lg font-bold text-[#0056b3]">/{b.id}/ - {t(b.name)}</div>
-                        {b.id === commonLinksBoard.id && (
-                          <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:border-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
-                            {t('commonLinks.staticBadge')}
-                          </span>
-                        )}
+              {boardsError ? renderBoardsErrorState() : (
+                <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                  <h2 className="mb-6 border-b pb-2 text-xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-100">{t('nav.boards')}</h2>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {(search.trim() ? boards.filter(b => {
+                      const s = search.trim().toLowerCase();
+                      const name = `${b.id} ${t(b.name)} ${t(b.description)}`.toLowerCase();
+                      return name.includes(s);
+                    }) : boards).map(b => (
+                      <div
+                        key={b.id}
+                        onClick={() => navigate(`/board/${b.id}`)}
+                        className="cursor-pointer rounded border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/70"
+                      >
+                        <div className="mb-1 flex items-center gap-2">
+                          <div className="text-lg font-bold text-[#0056b3]">/{b.id}/ - {t(b.name)}</div>
+                          {b.id === commonLinksBoard.id && (
+                            <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:border-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
+                              {t('commonLinks.staticBadge')}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{t(b.description)}</div>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{t(b.description)}</div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           } />
 
