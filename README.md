@@ -1,6 +1,6 @@
 # 7ch - Anonymous BBS (Frontend)
 
-7ch 是一个现代化匿名文本论坛（2ch/5ch 风格）的前端 SPA。本目录为前端工程，已实际部署到 Vercel；后端部署在 Render，数据库使用 Neon Postgres。前端保留了完整的 Mock Service 以便在没有后端的情况下独立开发与演示。
+7ch 是一个现代化匿名文本论坛（2ch/5ch 风格）的前端 SPA。本目录为前端工程，已实际部署到 Vercel；后端部署在 Render，数据库侧目前采用 `Neon + Supabase` 的双 PostgreSQL 方案。前端保留了完整的 Mock Service 以便在没有后端的情况下独立开发与演示。
 
 本 README 聚焦 **前端工程** 的架构、运行与对接说明；后端 API 的完整实现细节请查看 `backend_7ch/README.md`。
 
@@ -20,7 +20,7 @@
 
 - **前端**：Vercel（单页应用）
 - **后端**：Render（Actix-web）
-- **数据库**：Neon Postgres
+- **数据库**：Neon + Supabase（后端统一读写路由与回补）
 
 默认线上链接（代码内展示）：
 - 前端示例链接：`https://7ch-web.vercel.app`
