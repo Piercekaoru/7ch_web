@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { InlineErrorNotice } from './InlineErrorNotice';
 import { buildKnownErrorRedirectPath } from '../lib/errorRedirect';
+import { getDisplayErrorMessage } from '../lib/errorMessage';
 import { CreatePostRequest, CreateThreadRequest } from '../types';
 
 // 发帖/回帖表单：同一组件兼顾新线程与回复。
@@ -66,7 +68,7 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         window.location.assign(redirectPath);
         return;
       }
-      setSubmitError(err instanceof Error ? err.message : t('error.requestFailed'));
+      setSubmitError(getDisplayErrorMessage(err, t));
       console.error(err);
     } finally {
       setIsSubmitting(false);
@@ -121,9 +123,10 @@ export const PostForm: React.FC<PostFormProps> = ({ boardId, threadId, onSubmit,
         </div>
 
         {submitError && (
-          <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
-            {submitError}
-          </div>
+          <InlineErrorNotice
+            title={t('error.submitFailedTitle')}
+            message={submitError}
+          />
         )}
 
         <div className="flex justify-end gap-2 mt-2">

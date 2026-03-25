@@ -7,6 +7,16 @@ export interface ChangelogEntry {
 
 export const changelogData: ChangelogEntry[] = [
   {
+    "date": "Mar 25, 2026",
+    "title": "Update 2026-03-25",
+    "version": "build-20260325",
+    "changes": [
+      "[Frontend] fix: narrow service pause redirect handling",
+      "[Backend] fix: flush view counts to active databases",
+      "[Backend] feat: add automatic database failback"
+    ]
+  },
+  {
     "date": "Mar 22, 2026",
     "title": "Update 2026-03-22",
     "version": "build-20260322",
@@ -240,9 +250,7 @@ export const changelogData: ChangelogEntry[] = [
       "[Frontend] fix(types): include vite/client for ImportMeta env typing",
       "[Frontend] perf(api): disable caching with no-store for fetch",
       "[Frontend] chore(repo): initial frontend import",
-      "[Backend] feat(api): add rate limiting middleware",
-      "[Backend] fix(api): expand CORS allowed origins for local preview",
-      "[Backend] fix(db): schema-qualify queries and generate UUIDs in app"
+      "[Backend] feat(api): add rate limiting middleware"
     ]
   },
   {
@@ -250,8 +258,7 @@ export const changelogData: ChangelogEntry[] = [
     "title": "Update 2026-01-28",
     "version": "build-20260128",
     "changes": [
-      "[Frontend] Add routing support and static pages (QA, Docs, Privacy, Terms, Help)",
-      "[Frontend] Initial commit: Anonymous BBS application"
+      "[Frontend] Add routing support and static pages (QA, Docs, Privacy, Terms, Help)"
     ]
   }
 ];

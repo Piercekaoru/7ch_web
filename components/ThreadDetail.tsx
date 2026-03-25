@@ -7,7 +7,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { InlineErrorNotice } from './InlineErrorNotice';
 import { buildKnownErrorRedirectPath } from '../lib/errorRedirect';
+import { getDisplayErrorMessage } from '../lib/errorMessage';
 import { useTheme } from './theme-provider';
 import { api } from '../services/api';
 import { ThreadDetail, Post } from '../types';
@@ -287,7 +289,7 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
         navigate(redirectPath);
         return;
       }
-      setErrorMessage(e instanceof Error ? e.message : t('error.requestFailed'));
+      setErrorMessage(getDisplayErrorMessage(e, t));
       console.error(e);
     }
   };
@@ -339,16 +341,12 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
   if (!data && errorMessage) {
     return (
       <div className="max-w-4xl mx-auto px-2 pb-20 sm:px-2">
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
-          <div>{errorMessage}</div>
-          <button
-            type="button"
-            onClick={() => void loadData()}
-            className="mt-3 rounded border border-red-300 bg-white px-4 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-transparent dark:text-red-200 dark:hover:bg-red-950/50"
-          >
-            {t('servicePause.retry')}
-          </button>
-        </div>
+        <InlineErrorNotice
+          title={t('error.loadThreadTitle')}
+          message={errorMessage}
+          actionLabel={t('servicePause.retry')}
+          onAction={() => void loadData()}
+        />
       </div>
     );
   }
@@ -358,9 +356,11 @@ export const ThreadView: React.FC<ThreadViewProps> = ({ threadId, onBack, isFoll
   return (
     <div className="max-w-4xl mx-auto pb-20 px-0 sm:px-2">
       {errorMessage && (
-        <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
-          {errorMessage}
-        </div>
+        <InlineErrorNotice
+          title={t('error.loadThreadTitle')}
+          message={errorMessage}
+          className="mb-4"
+        />
       )}
       <div className="mb-4 border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 sm:rounded-sm sm:shadow-sm">
         <div className="mb-2 flex items-center text-xs text-gray-500 dark:text-gray-400">

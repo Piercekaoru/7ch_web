@@ -8,6 +8,7 @@ import { PostForm } from './components/PostForm';
 import { ThreadView } from './components/ThreadDetail';
 import { Button } from './components/ui/button';
 import { DonateModal } from './components/DonateModal';
+import { InlineErrorNotice } from './components/InlineErrorNotice';
 import { Pagination } from './components/Pagination';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 
@@ -33,6 +34,7 @@ import { ServicePaused } from './pages/ServicePaused';
 import { SubscriptionConvert } from './pages/SubscriptionConvert';
 import { CommonLinksBoard, CommonLinkDetail } from './pages/CommonLinks';
 import { buildKnownErrorRedirectPath } from './lib/errorRedirect';
+import { getDisplayErrorMessage } from './lib/errorMessage';
 import { commonLinksBoard } from './data/commonLinks';
 
 // 应用入口：路由、全局状态、SSE 通知、以及主要布局。
@@ -122,7 +124,7 @@ const BoardView: React.FC<{
         navigate(redirectPath);
         return;
       }
-      setThreadsError(error instanceof Error ? error.message : t('error.requestFailed'));
+      setThreadsError(getDisplayErrorMessage(error, t));
       console.error('Failed to load threads:', error);
     } finally {
       setLoading(false);
@@ -309,9 +311,11 @@ const BoardView: React.FC<{
         )}
 
         {threadsError && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
-            {threadsError}
-          </div>
+          <InlineErrorNotice
+            title={t('error.loadThreadsTitle')}
+            message={threadsError}
+            className="mb-4"
+          />
         )}
 
         <div className="space-y-4">
@@ -710,7 +714,7 @@ const App: React.FC = () => {
           navigate(redirectPath);
           return;
         }
-        setBoardsError(String(e?.message ?? e) || '加载失败');
+        setBoardsError(getDisplayErrorMessage(e, t));
         setBoards(mergeBoardsWithStatic([
           { id: 'all', name: 'board.all.name', description: 'board.all.desc' },
           { id: 'news', name: 'board.news.name', description: 'board.news.desc' },
@@ -1037,9 +1041,11 @@ const App: React.FC = () => {
               <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <h2 className="mb-6 border-b pb-2 text-xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-100">{t('nav.boards')}</h2>
                 {boardsError && (
-                  <div className="mb-4 rounded border border-red-200 bg-red-100 p-3 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-                    {t('meta.loading')}: {boardsError}
-                  </div>
+                  <InlineErrorNotice
+                    title={t('error.loadBoardsTitle')}
+                    message={boardsError}
+                    className="mb-4"
+                  />
                 )}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {(search.trim() ? boards.filter(b => {
