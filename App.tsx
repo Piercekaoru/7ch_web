@@ -337,13 +337,13 @@ const BoardView: React.FC<{
         {threadsError && threads.length === 0 ? renderThreadsErrorState() : (
           <>
             {!isAll && (
-              <div className="mb-6 flex justify-center">
+              <div className="mb-4 flex justify-end">
                 <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
                   <DialogTrigger asChild>
                     <button
-                      className="flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-3 font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                      className="flex items-center gap-2 rounded border border-gray-300 bg-white px-5 py-2.5 text-sm font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
                     >
-                      <span className="text-xl text-[#2da0b3]">✏️</span>
+                      <span className="text-lg text-[#2da0b3]">✏️</span>
                       {t('thread.new')}
                     </button>
                   </DialogTrigger>
