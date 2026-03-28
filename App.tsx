@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Dialog, DialogContent, DialogTrigger } from './components/ui/dialog';
 import { Docs } from './pages/Docs';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { Terms } from './pages/Terms';
@@ -335,80 +336,83 @@ const BoardView: React.FC<{
       <div className="max-w-4xl mx-auto py-6 px-2 sm:px-4">
         {threadsError && threads.length === 0 ? renderThreadsErrorState() : (
           <>
-        {!isAll && (
-          <div className="mb-6 flex justify-center">
-            {!showPostForm ? (
-              <button
-                onClick={() => setShowPostForm(true)}
-                className="flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-3 font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                <span className="text-xl text-[#2da0b3]">✏️</span>
-                {t('thread.new')}
-              </button>
-            ) : (
-              <PostForm
-                boardId={boardId!}
-                onSubmit={async (payload: any) => {
-                  const newId = await api.createThread(payload);
-                  const data = await api.getThreads(boardId!, 1);
-                  setThreads(data.threads);
-                  setTotal(data.total);
-                  setTotalPages(data.totalPages);
-                  setCurrentPage(1);
-                  const newThread = data.threads.find(t => t.id === newId);
-                  if (newThread) onThreadClick(newThread);
-                }}
-                onCancel={() => setShowPostForm(false)}
+            {!isAll && (
+              <div className="mb-6 flex justify-center">
+                <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
+                  <DialogTrigger asChild>
+                    <button
+                      className="flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-3 font-bold text-[#333] shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <span className="text-xl text-[#2da0b3]">✏️</span>
+                      {t('thread.new')}
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl w-[95vw] p-0 border-none bg-transparent shadow-none [&>button]:hidden">
+                    <PostForm
+                      boardId={boardId!}
+                      onSubmit={async (payload: any) => {
+                        const newId = await api.createThread(payload);
+                        const data = await api.getThreads(boardId!, 1);
+                        setThreads(data.threads);
+                        setTotal(data.total);
+                        setTotalPages(data.totalPages);
+                        setCurrentPage(1);
+                        const newThread = data.threads.find(t => t.id === newId);
+                        if (newThread) onThreadClick(newThread);
+                        setShowPostForm(false);
+                      }}
+                      onCancel={() => setShowPostForm(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+
+            {threadsError && threads.length > 0 && (
+              <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                <div className="font-bold">{t('error.loadThreadsTitle')}</div>
+                <div>{threadsError}</div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {filteredThreads.map((thread) => {
+                const bObj = boards.find(b => b.id === thread.boardId);
+                const displayBoardName = isAll ? (bObj ? t(bObj.name) : thread.boardId) : t(board.name);
+                return renderThreadCard(thread, displayBoardName);
+              })}
+            </div>
+
+            {/* PC Mode: Classic Pagination */}
+            {!isMobile && !search.trim() && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             )}
-          </div>
-        )}
 
-        {threadsError && threads.length > 0 && (
-          <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-            <div className="font-bold">{t('error.loadThreadsTitle')}</div>
-            <div>{threadsError}</div>
-          </div>
-        )}
-
-        <div className="space-y-4">
-          {filteredThreads.map((thread) => {
-            const bObj = boards.find(b => b.id === thread.boardId);
-            const displayBoardName = isAll ? (bObj ? t(bObj.name) : thread.boardId) : t(board.name);
-            return renderThreadCard(thread, displayBoardName);
-          })}
-        </div>
-
-        {/* PC Mode: Classic Pagination */}
-        {!isMobile && !search.trim() && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
-
-        {/* Mobile Mode: Infinite Scroll Trigger */}
-        {isMobile && !search.trim() && (
-          <div ref={loadMoreRef} className="py-4 text-center">
-            {loading && <span className="text-gray-500 dark:text-gray-400">{t('meta.loading')}...</span>}
-            {!loading && hasMore && (
-              <button
-                onClick={() => {
-                  const nextPage = currentPage + 1;
-                  setCurrentPage(nextPage);
-                  loadThreads(nextPage, true);
-                }}
-                className="text-[#0056b3] hover:underline dark:text-sky-300"
-              >
-                {t('pagination.load_more')}
-              </button>
+            {/* Mobile Mode: Infinite Scroll Trigger */}
+            {isMobile && !search.trim() && (
+              <div ref={loadMoreRef} className="py-4 text-center">
+                {loading && <span className="text-gray-500 dark:text-gray-400">{t('meta.loading')}...</span>}
+                {!loading && hasMore && (
+                  <button
+                    onClick={() => {
+                      const nextPage = currentPage + 1;
+                      setCurrentPage(nextPage);
+                      loadThreads(nextPage, true);
+                    }}
+                    className="text-[#0056b3] hover:underline dark:text-sky-300"
+                  >
+                    {t('pagination.load_more')}
+                  </button>
+                )}
+                {!hasMore && threads.length > 0 && (
+                  <div className="text-gray-500 dark:text-gray-400">{t('pagination.no_more')}</div>
+                )}
+              </div>
             )}
-            {!hasMore && threads.length > 0 && (
-              <div className="text-gray-500 dark:text-gray-400">{t('pagination.no_more')}</div>
-            )}
-          </div>
-        )}
           </>
         )}
       </div>

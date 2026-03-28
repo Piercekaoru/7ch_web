@@ -11,6 +11,7 @@ export const changelogData: ChangelogEntry[] = [
     "title": "Update 2026-03-25",
     "version": "build-20260325",
     "changes": [
+      "[Frontend] fix: promote thread load failures to page state",
       "[Frontend] docs: update database deployment notes",
       "[Frontend] fix: promote board load failures to page state",
       "[Frontend] fix: unify frontend error notice styling",
@@ -250,8 +251,7 @@ export const changelogData: ChangelogEntry[] = [
     "changes": [
       "[Frontend] feat(i18n): add internationalization for all static pages",
       "[Frontend] docs(qa): update contact email address",
-      "[Frontend] feat(ui): implement client-side search for boards and threads",
-      "[Frontend] fix(types): include vite/client for ImportMeta env typing"
+      "[Frontend] feat(ui): implement client-side search for boards and threads"
     ]
   }
 ];
