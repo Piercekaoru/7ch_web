@@ -78,6 +78,7 @@ export interface CreateSubscriptionLinkRequest {
 export interface CreateSubscriptionLinkResponse {
   url: string;
   token: string;
+  displayUrl?: string;
   expiresAt?: string;
 }
 

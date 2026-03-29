@@ -7,6 +7,16 @@ export interface ChangelogEntry {
 
 export const changelogData: ChangelogEntry[] = [
   {
+    "date": "Mar 28, 2026",
+    "title": "Update 2026-03-28",
+    "version": "build-20260328",
+    "changes": [
+      "[Frontend] style(ui): tighten composer trigger",
+      "[Frontend] feat(ui): open composer in dialog",
+      "[Frontend] feat(ui): redesign post composer"
+    ]
+  },
+  {
     "date": "Mar 25, 2026",
     "title": "Update 2026-03-25",
     "version": "build-20260325",
@@ -242,16 +252,6 @@ export const changelogData: ChangelogEntry[] = [
       "[Frontend] Update frontend: modify App.tsx, ThreadDetail.tsx and add vercel.json",
       "[Frontend] Update frontend components",
       "[Frontend] Update frontend: add DonateModal component and dialog UI"
-    ]
-  },
-  {
-    "date": "Jan 30, 2026",
-    "title": "Update 2026-01-30",
-    "version": "build-20260130",
-    "changes": [
-      "[Frontend] feat(i18n): add internationalization for all static pages",
-      "[Frontend] docs(qa): update contact email address",
-      "[Frontend] feat(ui): implement client-side search for boards and threads"
     ]
   }
 ];

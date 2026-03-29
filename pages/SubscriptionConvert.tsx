@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { formatLocalizedCalendarDateTime } from '../lib/date';
 import { buildKnownErrorRedirectPath } from '../lib/errorRedirect';
+import { maskSubscriptionUrlForDisplay, validateSubscriptionSourceUrl } from '../lib/subscriptionUrl';
 import { api } from '../services/api';
 import { CreateSubscriptionLinkResponse, SubscriptionConvertResponse } from '../types';
 
@@ -18,12 +19,23 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
   const [sourceUrl, setSourceUrl] = useState('');
   const [result, setResult] = useState<SubscriptionConvertResponse | null>(null);
   const [linkResult, setLinkResult] = useState<CreateSubscriptionLinkResponse | null>(null);
-  const [linkTtl, setLinkTtl] = useState<'0' | '86400' | '604800' | '2592000'>('0');
+  const [linkTtl, setLinkTtl] = useState<'86400' | '604800' | '2592000' | '0'>('86400');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'failed'>('idle');
   const [copyLinkStatus, setCopyLinkStatus] = useState<'idle' | 'success' | 'failed'>('idle');
+  const [showFullLink, setShowFullLink] = useState(false);
+  const maskedLinkUrl = linkResult ? (linkResult.displayUrl ?? maskSubscriptionUrlForDisplay(linkResult.url)) : null;
+
+  const resolveValidatedSourceUrl = () => {
+    const validation = validateSubscriptionSourceUrl(sourceUrl);
+    if (!validation.ok) {
+      setError(validation.reason === 'empty' ? t('tools.convert.input.empty') : t('tools.convert.input.publicUrlOnly'));
+      return null;
+    }
+    return validation.normalizedUrl;
+  };
 
   const handleConvert = async () => {
     setError(null);
@@ -31,9 +43,9 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
     setLinkResult(null);
     setCopyStatus('idle');
     setCopyLinkStatus('idle');
-    const url = sourceUrl.trim();
+    setShowFullLink(false);
+    const url = resolveValidatedSourceUrl();
     if (!url) {
-      setError(t('tools.convert.input.empty'));
       return;
     }
 
@@ -61,9 +73,13 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
   const handleCreateLink = async () => {
     setError(null);
     setCopyLinkStatus('idle');
-    const url = sourceUrl.trim();
+    setShowFullLink(false);
+    const url = resolveValidatedSourceUrl();
     if (!url) {
-      setError(t('tools.convert.input.empty'));
+      return;
+    }
+
+    if (linkTtl === '0' && !window.confirm(t('tools.convert.link.confirmNeverExpire'))) {
       return;
     }
 
@@ -118,6 +134,7 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
       setCopyLinkStatus('success');
     } catch {
       setCopyLinkStatus('failed');
+      setShowFullLink(true);
     }
   };
 
@@ -180,13 +197,13 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={linkTtl}
-                onChange={(e) => setLinkTtl(e.target.value as '0' | '86400' | '604800' | '2592000')}
+                onChange={(e) => setLinkTtl(e.target.value as '86400' | '604800' | '2592000' | '0')}
                 className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:border-gray-400 focus:outline-none dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:focus:border-gray-500"
               >
-                <option value="0">{t('tools.convert.link.ttl.0')}</option>
                 <option value="86400">{t('tools.convert.link.ttl.1d')}</option>
                 <option value="604800">{t('tools.convert.link.ttl.7d')}</option>
                 <option value="2592000">{t('tools.convert.link.ttl.30d')}</option>
+                <option value="0">{t('tools.convert.link.ttl.0')}</option>
               </select>
               <button
                 onClick={handleCreateLink}
@@ -279,10 +296,23 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
           <section className="mb-6 rounded-sm border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
             <h3 className="mb-3 text-lg font-bold text-gray-800 dark:text-gray-100">{t('tools.convert.secureLink.title')}</h3>
             <div className="mb-4 rounded border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/70">
-              <a href={linkResult.url} target="_blank" rel="noreferrer" className="break-all text-sm font-mono text-[#0056b3] hover:underline dark:text-sky-300">
-                {linkResult.url}
-              </a>
+              <code className="block break-all text-sm font-mono text-[#0056b3] dark:text-sky-300">
+                {maskedLinkUrl}
+              </code>
             </div>
+            <p className="mb-4 text-xs text-amber-700 dark:text-amber-300">{t('tools.convert.secureLink.maskedNote')}</p>
+            {showFullLink && (
+              <div className="mb-4 rounded border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
+                <a
+                  href={linkResult.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all text-sm font-mono text-[#0056b3] hover:underline dark:text-sky-300"
+                >
+                  {linkResult.url}
+                </a>
+              </div>
+            )}
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={handleCopyLink}
@@ -290,6 +320,12 @@ export const SubscriptionConvert: React.FC<SubscriptionConvertProps> = ({ onBack
               >
                 <Copy className="w-4 h-4" />
                 {t('tools.convert.secureLink.copy')}
+              </button>
+              <button
+                onClick={() => setShowFullLink((current) => !current)}
+                className="inline-flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-1.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+              >
+                {showFullLink ? t('tools.convert.secureLink.hideFull') : t('tools.convert.secureLink.showFull')}
               </button>
 
               <div className="text-xs text-gray-500 dark:text-gray-400">

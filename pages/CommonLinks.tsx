@@ -175,19 +175,19 @@ export const CommonLinkDetail: React.FC<CommonLinkDetailProps> = ({ onBack }) =>
             <a
               href={item.href}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-sm bg-[#2da0b3] px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#238a9b]"
             >
               {t('commonLinks.openSite')}
               <ExternalLink className="h-4 w-4" />
             </a>
             {item.repoHref && (
-              <a
-                href={item.repoHref}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
+                <a
+                  href={item.repoHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                >
                 {t('commonLinks.viewSource')}
                 <ExternalLink className="h-4 w-4" />
               </a>

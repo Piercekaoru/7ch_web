@@ -1,13 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getSafeInternalPathFromSearch } from '../lib/safeNavigation';
 import { parseRetryAfterFromSearch } from '../lib/rateLimit';
-
-const getRetryPath = (search: string) => {
-  const params = new URLSearchParams(search);
-  const from = params.get('from');
-  return from && from.startsWith('/') ? from : '/';
-};
 
 const formatRetryAfter = (retryAfterSeconds: number | null, language: string) => {
   if (!retryAfterSeconds) return null;
@@ -30,7 +25,7 @@ export const RateLimited: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const retryPath = getRetryPath(location.search);
+  const retryPath = getSafeInternalPathFromSearch(location.search);
   const retryAfterSeconds = parseRetryAfterFromSearch(location.search);
   const waitValue = formatRetryAfter(retryAfterSeconds, i18n.language) ?? t('rateLimit.waitValueFallback');
 

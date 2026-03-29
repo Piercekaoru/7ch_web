@@ -96,7 +96,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({ open, onClose }) => {
               {t('donate.close')}
             </Button>
             <Button
-              onClick={() => window.open('https://solana.com', '_blank')}
+              onClick={() => window.open('https://solana.com', '_blank', 'noopener,noreferrer')}
               className="group flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-5 text-sm font-medium text-gray-900 shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 sm:w-auto"
             >
               <span className="bg-gradient-to-r from-[#14F195] to-[#9945FF] bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">

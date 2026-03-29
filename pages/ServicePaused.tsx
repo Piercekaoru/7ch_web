@@ -2,13 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { formatLocalizedCalendarDate } from '../lib/date';
+import { getSafeInternalPathFromSearch } from '../lib/safeNavigation';
 import { getNextRecoveryDate } from '../lib/servicePause';
-
-const getRetryPath = (search: string) => {
-  const params = new URLSearchParams(search);
-  const from = params.get('from');
-  return from && from.startsWith('/') ? from : '/';
-};
 
 interface ServicePausedProps {
   onOpenDonate?: () => void;
@@ -19,7 +14,7 @@ export const ServicePaused: React.FC<ServicePausedProps> = ({ onOpenDonate }) =>
   const navigate = useNavigate();
   const location = useLocation();
 
-  const retryPath = getRetryPath(location.search);
+  const retryPath = getSafeInternalPathFromSearch(location.search);
   const nextRecoveryDate = formatLocalizedCalendarDate(getNextRecoveryDate(), i18n.language);
 
   return (
@@ -117,7 +112,7 @@ export const ServicePaused: React.FC<ServicePausedProps> = ({ onOpenDonate }) =>
             <a
               href="https://cobalt.tools"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="group flex flex-col px-4 py-3 hover:bg-gray-50 border-b border-gray-100 dark:border-gray-800 dark:hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center justify-between mb-0.5">

@@ -12,6 +12,7 @@ import {
   SubscriptionConvertRequest,
   SubscriptionConvertResponse,
 } from '../types';
+import { assertPublicSubscriptionSourceUrl, maskSubscriptionUrlForDisplay } from '../lib/subscriptionUrl';
 
 // 本地 Mock：使用 LocalStorage 模拟后端 API 行为，便于无后端开发/演示。
 // Local mock: uses LocalStorage to emulate backend API for offline dev/demo.
@@ -286,21 +287,7 @@ export class MockService implements I7chAPI {
       throw new Error('currently only clash -> sing-box is supported');
     }
 
-    const sourceUrl = payload.sourceUrl.trim();
-    if (!sourceUrl) {
-      throw new Error('sourceUrl cannot be empty');
-    }
-
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(sourceUrl);
-    } catch {
-      throw new Error('sourceUrl is invalid');
-    }
-
-    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      throw new Error('sourceUrl must use http or https');
-    }
+    assertPublicSubscriptionSourceUrl(payload.sourceUrl);
 
     const now = Date.now();
     const content = JSON.stringify({
@@ -343,20 +330,20 @@ export class MockService implements I7chAPI {
 
   async createSubscriptionLink(payload: CreateSubscriptionLinkRequest): Promise<CreateSubscriptionLinkResponse> {
     await this.delay(120);
-    if (!payload.sourceUrl || payload.sourceUrl.trim().length === 0) {
-      throw new Error('sourceUrl cannot be empty');
-    }
+    const sourceUrl = assertPublicSubscriptionSourceUrl(payload.sourceUrl);
     const expiresIn = payload.expiresInSeconds ?? 0;
     const expiresAt = expiresIn > 0 ? new Date(Date.now() + expiresIn * 1000).toISOString() : undefined;
     const fakeToken = btoa(JSON.stringify({
-      src: payload.sourceUrl,
+      src: sourceUrl,
       sf: payload.sourceFormat,
       tf: payload.targetFormat,
       iat: Date.now()
     })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    const url = `${window.location.origin}/api/sub?token=${fakeToken}`;
     return {
       token: fakeToken,
-      url: `${window.location.origin}/api/sub?token=${fakeToken}`,
+      url,
+      displayUrl: maskSubscriptionUrlForDisplay(url),
       expiresAt
     };
   }

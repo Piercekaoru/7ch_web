@@ -1,1 +1,21 @@
-{"rewrites": [{"source": "/api/:path*", "destination": "https://7ch-api.render.com/api/:path*"}, {"source": "/(.*)", "destination": "/index.html"}], "redirects": [{"source": "/test/read.cgi/:boardId/:threadId", "destination": "/board/:boardId/thread/:threadId", "statusCode": 301}]}
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://7ch-api.render.com/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/test/read.cgi/:boardId/:threadId", "destination": "/board/:boardId/thread/:threadId", "statusCode": 301 }
+  ]
+}
