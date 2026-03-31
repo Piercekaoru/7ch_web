@@ -1,6 +1,6 @@
 # 7ch - Anonymous BBS (Frontend)
 
-7ch 是一个现代化匿名文本论坛（2ch/5ch 风格）的前端 SPA。本目录为前端工程，已实际部署到 Vercel；后端部署在 Render，数据库侧目前采用 `Neon + Supabase` 的双 PostgreSQL 方案。前端保留了完整的 Mock Service 以便在没有后端的情况下独立开发与演示。
+7ch 是一个现代化匿名文本论坛（2ch/5ch 风格）的前端 SPA。本目录为前端工程，已实际部署到 Vercel；后端部署在 Render，数据库侧目前采用 `Neon + Supabase` 的双 PostgreSQL 方案。前端保留了完整的 Mock Service 以便在没有后端的情况下独立开发与演示，同时也包含 SSE 更新提示、服务暂停页、限流页、主题切换与一组静态工具/外链页面。
 
 本 README 聚焦 **前端工程** 的架构、运行与对接说明；后端 API 的完整实现细节请查看 `backend_7ch/README.md`。
 
@@ -10,8 +10,11 @@
 
 - 经典文本板体验：板块、帖子列表、楼层、引用（>>123）等核心交互
 - 匿名机制展示：每日 ID、Tripcode（绊码）、Sage 下沉等传统 BBS 文化元素
-- 现代体验：移动端无限滚动 + 桌面端分页、关注/隐藏帖子、文档与帮助页
+- 现代体验：移动端无限滚动 + 桌面端分页、关注/隐藏帖子、版本更新提示、文档与帮助页
 - 国际化：内置 `zh-CN` 与 `ja-JP` 文案资源，支持语言切换
+- 主题切换：支持 `light / dark / system`
+- 错误兜底：429 限流页、503 服务暂停页与显式跳转
+- 静态内容：只读的“常用链接”栏目与独立 changelog 页面
 - 可切换数据源：真实 API（Render）与本地 Mock（LocalStorage）一键切换
 
 ---
@@ -24,7 +27,8 @@
 
 默认线上链接（代码内展示）：
 - 前端示例链接：`https://7ch-web.vercel.app`
-- 后端默认地址（Vercel 环境自动回退）：`https://backend-7ch.onrender.com`
+- 前端运行时代码在 `*.vercel.app` 下的 API 回退地址：`https://7ch-api.render.com`
+- `vercel.json` 中的同源 `/api/*` rewrite 目标：`https://7ch-api.render.com/api/*`
 
 > 注：前端可通过环境变量覆盖 API 地址，详见“环境变量”。
 
@@ -52,10 +56,14 @@
 ├── i18n.ts                  # 国际化资源与初始化
 ├── pages/                   # 页面（Boards/Docs/Help/Tools 等）
 ├── components/              # UI 与业务组件
+│   ├── ThemeSwitcher.tsx    # 主题切换控件
+│   └── theme-provider.tsx   # light/dark/system 主题状态
 ├── services/
 │   ├── api.ts               # 真正 API 客户端（fetch）
 │   └── mockService.ts       # 本地 Mock（LocalStorage）
+├── data/                    # changelog、静态链接等前端内置内容
 ├── lib/                     # 通用工具与 UI 基础能力
+├── scripts/                 # 构建前脚本（如 changelog 生成）
 ├── types.ts                 # 前后端数据契约
 ├── index.css                # 全局样式
 └── vite.config.ts           # 构建配置
@@ -88,6 +96,9 @@ npm run build
 npm run preview
 ```
 
+补充说明：
+- `npm run build` 会先执行 `npm run update-changelog`，生成/刷新 `data/changelog.ts` 后再进入 Vite 构建。
+
 ---
 
 ## 环境变量（前端）
@@ -97,14 +108,17 @@ npm run preview
 ```
 VITE_API_BASE_URL=http://localhost:8080
 VITE_USE_MOCK=false
+VITE_FORCE_SERVICE_PAUSED=false
 ```
 
 规则说明：
 - `VITE_USE_MOCK=true`：强制使用 `services/mockService.ts`（LocalStorage 模拟）。
 - `VITE_USE_MOCK=false`：使用真实 API。
+- `VITE_FORCE_SERVICE_PAUSED=true`：前端本地强制把真实 API 请求视为“服务暂停”，便于联调 `/service-paused` 页面与错误跳转。
 - `VITE_API_BASE_URL` 未设置时：
-  - 若部署在 `*.vercel.app`，自动回退到 `https://backend-7ch.onrender.com`。
+  - 若部署在 `*.vercel.app`，运行时代码会自动回退到 `https://7ch-api.render.com`。
   - 否则回退到 `http://localhost:8080`。
+- Vercel 部署配置中还包含一条同源 `/api/:path*` rewrite，目标为 `https://7ch-api.render.com/api/:path*`；这属于平台层转发规则，与前端运行时代码中的 `apiBaseUrl` 回退逻辑是两套独立配置。
 
 ---
 
@@ -132,6 +146,47 @@ VITE_USE_MOCK=false
 
 ---
 
+## 页面与路由
+
+当前前端除常规板块页外，还包含一批文档、状态页和只读内容页：
+
+- `/`：首页板块列表
+- `/board/:boardId`：板块页
+- `/board/:boardId/thread/:threadId`：线程详情页
+- `/favorites`：收藏线程页
+- `/board/links`：常用链接只读栏目
+- `/board/links/thread/:linkId`：静态链接详情页
+- `/docs`：技术文档页
+- `/help`：使用须知
+- `/QA`：常见问题
+- `/privacy`：隐私政策
+- `/terms`：用户协议
+- `/changelog`：更新日志
+- `/tools/convert`：订阅转换工具页
+- `/service-paused`：服务暂停说明页
+- `/rate-limited`：限流说明页
+
+补充：
+- `Common Links` 是前端内置的静态只读栏目，会和真实后端返回的板块列表合并显示。
+- `vercel.json` 还保留了旧式 `/test/read.cgi/:boardId/:threadId` 到新线程路由的 301 重定向。
+
+---
+
+## 实时更新与错误处理
+
+- 非 Mock 模式下，前端会通过 `EventSource` 订阅 `GET /api/events`。
+- 当前会消费的 SSE 事件包括：
+  - `server_version`
+  - `thread_created`
+  - `post_created`
+  - `resync`
+- 线程页在 SSE 断开时会退回到轮询刷新。
+- 最近一次已确认的服务端版本会存入 `localStorage`，键名：`7ch_server_version`。
+- 当真实 API 返回 `429` 时，前端会解析 `Retry-After` 并跳转到 `/rate-limited`。
+- 当真实 API 返回 `503` 且错误码为 `database_unavailable`，或启用了 `VITE_FORCE_SERVICE_PAUSED=true` 时，前端会跳转到 `/service-paused`。
+
+---
+
 ## Mock Service 说明
 
 `services/mockService.ts` 提供完整的本地数据模拟，适用于：
@@ -149,25 +204,37 @@ Mock 的特性：
 
 ---
 
-## 国际化（i18n）
+## 主题、国际化与本地偏好
 
 资源定义在 `i18n.ts`，当前内置：
 - `zh-CN`
 - `ja-JP`
 
-语言偏好使用 `localStorage` 持久化，键名：`7ch_lang`。
-
----
-
-## 关注 / 隐藏功能
+- 语言偏好使用 `localStorage` 持久化，键名：`7ch_lang`
+- 主题支持 `light / dark / system`，键名：`7ch_theme`
+- 隐藏线程列表键名：`7ch_hidden_threads`
+- 关注线程列表键名：`7ch_followed_threads`
 
 前端支持对线程进行：
 - 隐藏（不再显示）
 - 关注（收藏）
 
-数据存储在 `localStorage`：
-- `7ch_hidden_threads`
-- `7ch_followed_threads`
+主题系统通过 `ThemeProvider` 挂在应用根部，会同步 HTML 根节点的 `dark` class、`data-theme` 与 `color-scheme`。
+
+---
+
+## 部署补充
+
+`vercel.json` 当前还负责一部分生产行为：
+
+- 为全站附加安全响应头：
+  - `Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'`
+  - `Referrer-Policy: no-referrer`
+  - `X-Content-Type-Options: nosniff`
+  - `X-Frame-Options: DENY`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+- 把同源 `/api/:path*` 转发到 Render
+- 把历史路径 `/test/read.cgi/:boardId/:threadId` 重定向到新的 SPA 线程地址
 
 ---
 
