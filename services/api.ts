@@ -176,7 +176,7 @@ class RealService implements I7chAPI {
 const envBase = (import.meta.env.VITE_API_BASE_URL as string | undefined);
 const defaultBase = "http://localhost:8080";
 const isVercel = typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app");
-const vercelFallbackBase = "https://7ch-api.render.com";
+const vercelFallbackBase = "https://backend-7ch.onrender.com";
 // API 基址优先级：显式环境变量 > Vercel 回退 > 本地默认。
 // API base priority: env override > Vercel fallback > local default.
 export const apiBaseUrl = (envBase && envBase.trim().length > 0 ? envBase : (isVercel ? vercelFallbackBase : defaultBase));

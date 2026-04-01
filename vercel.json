@@ -12,7 +12,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://7ch-api.render.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://backend-7ch.onrender.com/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "redirects": [

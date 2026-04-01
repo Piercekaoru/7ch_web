@@ -27,8 +27,8 @@
 
 默认线上链接（代码内展示）：
 - 前端示例链接：`https://7ch-web.vercel.app`
-- 前端运行时代码在 `*.vercel.app` 下的 API 回退地址：`https://7ch-api.render.com`
-- `vercel.json` 中的同源 `/api/*` rewrite 目标：`https://7ch-api.render.com/api/*`
+- 前端运行时代码在 `*.vercel.app` 下的 API 回退地址：`https://backend-7ch.onrender.com`
+- `vercel.json` 中的同源 `/api/*` rewrite 目标：`https://backend-7ch.onrender.com/api/*`
 
 > 注：前端可通过环境变量覆盖 API 地址，详见“环境变量”。
 
@@ -116,9 +116,9 @@ VITE_FORCE_SERVICE_PAUSED=false
 - `VITE_USE_MOCK=false`：使用真实 API。
 - `VITE_FORCE_SERVICE_PAUSED=true`：前端本地强制把真实 API 请求视为“服务暂停”，便于联调 `/service-paused` 页面与错误跳转。
 - `VITE_API_BASE_URL` 未设置时：
-  - 若部署在 `*.vercel.app`，运行时代码会自动回退到 `https://7ch-api.render.com`。
+  - 若部署在 `*.vercel.app`，运行时代码会自动回退到 `https://backend-7ch.onrender.com`。
   - 否则回退到 `http://localhost:8080`。
-- Vercel 部署配置中还包含一条同源 `/api/:path*` rewrite，目标为 `https://7ch-api.render.com/api/:path*`；这属于平台层转发规则，与前端运行时代码中的 `apiBaseUrl` 回退逻辑是两套独立配置。
+- Vercel 部署配置中还包含一条同源 `/api/:path*` rewrite，目标为 `https://backend-7ch.onrender.com/api/:path*`；这属于平台层转发规则，与前端运行时代码中的 `apiBaseUrl` 回退逻辑是两套独立配置。
 
 ---
 
