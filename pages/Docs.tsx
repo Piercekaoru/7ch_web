@@ -148,7 +148,6 @@ export const Docs: React.FC<DocsProps> = ({ onBack }) => {
 /board/:boardId         -> Board
 /board/:boardId/thread/:threadId -> Thread
 /favorites              -> Favorites
-/tools/convert          -> Subscription Convert Tool
 /docs | /help | /terms | /privacy | /QA -> Static Pages`}
                         </CodeBlock>
                         <p>

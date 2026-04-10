@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
-import { useNavigate, useParams, Route, Routes, Link, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, Route, Routes, Link, useLocation } from 'react-router-dom';
 import { api, apiBaseUrl, useMock as isMockMode } from './services/api';
 import { Board, Thread } from './types';
 import { JobMetaSummary } from './components/JobMetaSummary';
@@ -33,6 +33,9 @@ import { buildJobMetaSearchText } from './lib/jobMeta';
 // App entry: routing, global state, SSE notices, and overall layout.
 
 const STATIC_BOARDS: Board[] = [commonLinksBoard];
+// 兼容性说明：
+// 前端当前故意隐藏 `/baito/` 板块和 `/tools/convert` 工具页，
+// 但后端仍保留对应的板块 ID 与订阅转换 API，供兼容性、受控调用和后续恢复使用。
 const HIDDEN_BOARD_IDS = new Set(['baito']);
 
 const isBoardVisible = (boardId: string) => !HIDDEN_BOARD_IDS.has(boardId);
@@ -77,9 +80,6 @@ const RateLimitedPage = lazy(() =>
 );
 const ServicePausedPage = lazy(() =>
   import('./pages/ServicePaused').then((module) => ({ default: module.ServicePaused }))
-);
-const SubscriptionConvertPage = lazy(() =>
-  import('./pages/SubscriptionConvert').then((module) => ({ default: module.SubscriptionConvert }))
 );
 const CommonLinksBoardPage = lazy(() =>
   import('./pages/CommonLinks').then((module) => ({ default: module.CommonLinksBoard }))
@@ -1214,14 +1214,6 @@ const App: React.FC = () => {
         <Link to="/help"><button className="themed-nav-link hover:underline">{t('footer.help')}</button></Link>
         <Link to="/QA"><button className="themed-nav-link hover:underline">{t('footer.QA')}</button></Link>
         <Link to="/changelog"><button className="themed-nav-link hover:underline">Changelog</button></Link>
-        <Link to="/tools/convert">
-          <button className="themed-nav-link inline-flex items-center gap-2 hover:underline">
-            <span>{t('tools.convert.link')}</span>
-            <span className="themed-chip px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-200">
-              {t('tools.convert.badge')}
-            </span>
-          </button>
-        </Link>
         <button className="themed-nav-link hover:underline" onClick={() => setShowDonateModal(true)}>{t('footer.donate')}</button>
       </div>
       <div>&copy; 2024 7ch Project. All rights reserved.</div>
@@ -1434,11 +1426,8 @@ const App: React.FC = () => {
               <ChangelogPage onBack={() => navigate('/')} />
             </LazyRouteBoundary>
           } />
-          <Route path="/tools/convert" element={
-            <LazyRouteBoundary>
-              <SubscriptionConvertPage onBack={() => navigate('/')} />
-            </LazyRouteBoundary>
-          } />
+          {/* 前端不再公开暴露订阅转换页；后端 `/api/subscription/*` 仍保留。 */}
+          <Route path="/tools/convert" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       {location.pathname !== '/service-paused' && location.pathname !== '/rate-limited' && renderFooter()}

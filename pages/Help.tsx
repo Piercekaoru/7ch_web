@@ -45,7 +45,6 @@ export const Help: React.FC<HelpProps> = ({ onBack }) => {
     { id: 'sage', label: t('help.toc.sage') },
     { id: 'anchors', label: t('help.toc.anchors') },
     { id: 'ids', label: t('help.toc.ids') },
-    { id: 'subscription', label: t('help.toc.subscription') },
   ];
 
   return (
@@ -170,26 +169,6 @@ export const Help: React.FC<HelpProps> = ({ onBack }) => {
               <li><strong>{t('help.ids.scope')}</strong></li>
               <li><strong>{t('help.ids.reset')}</strong></li>
               <li><strong>{t('help.ids.privacy')}</strong></li>
-            </ul>
-          </Section>
-
-          <Section id="subscription" title={t('help.section.subscription')}>
-            <p>
-              {t('help.subscription.intro')}
-            </p>
-            <ul className="list-disc list-inside pl-2 space-y-2 mt-2 text-sm">
-              <li>
-                <strong>{t('help.subscription.route')}</strong>
-              </li>
-              <li>
-                <strong>{t('help.subscription.support')}</strong>
-              </li>
-              <li>
-                <strong>{t('help.subscription.security')}</strong>
-              </li>
-              <li>
-                <strong>{t('help.subscription.status')}</strong>
-              </li>
             </ul>
           </Section>
 

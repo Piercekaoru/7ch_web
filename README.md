@@ -4,6 +4,10 @@
 
 本 README 聚焦 **前端工程** 的架构、运行与对接说明；后端 API 的完整实现细节请查看 `backend_7ch/README.md`。
 
+> 兼容性说明：
+> 前端当前已经隐藏日本打工栏目 `/baito/` 和订阅转换工具页 `/tools/convert`，并且直达工具页会重定向回首页。
+> 但后端仍保留对应的板块 ID、帖子数据结构以及订阅转换相关 API，以兼容既有数据、受控调用和后续恢复上线。
+
 ---
 
 ## 项目定位与特性
@@ -140,11 +144,15 @@ VITE_FORCE_SERVICE_PAUSED=false
 - `GET /api/threads/:threadId`
 - `POST /api/threads`
 - `POST /api/posts`
-- `POST /api/subscription/convert`（当前仅 `clash -> sing-box`）
-- `POST /api/subscription/link`（生成安全订阅链接）
+- `POST /api/subscription/convert`（当前仅 `clash -> sing-box`，前端已隐藏入口但 API 仍保留）
+- `POST /api/subscription/link`（生成安全订阅链接，前端已隐藏入口但 API 仍保留）
 - `GET /api/sub?token=...`（通过安全 token 获取转换后订阅内容）
 
 响应字段采用 **camelCase**，与 TypeScript 类型保持一致。
+
+补充：
+- 后端 `GET /api/boards` 仍可能返回 `baito`；前端会在 UI 层主动过滤该板块。
+- 订阅转换相关客户端方法和类型契约仍保留在前端代码中，但不再对普通用户公开展示。
 
 ---
 
@@ -164,12 +172,13 @@ VITE_FORCE_SERVICE_PAUSED=false
 - `/privacy`：隐私政策
 - `/terms`：用户协议
 - `/changelog`：更新日志
-- `/tools/convert`：订阅转换工具页
 - `/service-paused`：服务暂停说明页
 - `/rate-limited`：限流说明页
 
 补充：
 - `Common Links` 是前端内置的静态只读栏目，会和真实后端返回的板块列表合并显示。
+- `/baito/` 与 `/tools/convert` 当前已从前端公开导航中移除。
+- 直接访问 `/tools/convert` 会被前端重定向回首页；订阅转换 API 本身仍在后端保留。
 - `vercel.json` 还保留了旧式 `/test/read.cgi/:boardId/:threadId` 到新线程路由的 301 重定向。
 
 ---

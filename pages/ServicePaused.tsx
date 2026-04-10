@@ -101,12 +101,6 @@ export const ServicePaused: React.FC<ServicePausedProps> = ({ onOpenDonate }) =>
             <Link to="/terms" className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors font-medium">
               {t('footer.terms')}
             </Link>
-            <Link to="/tools/convert" className="flex px-4 py-3 text-sm text-gray-700 items-center justify-between hover:bg-gray-50 border-b border-gray-100 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors font-medium">
-              <span>{t('tools.convert.link')}</span>
-              <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:border-amber-700 dark:bg-amber-900/50 dark:text-amber-200">
-                {t('tools.convert.badge')}
-              </span>
-            </Link>
 
             {/* Cobalt.tools link */}
             <a

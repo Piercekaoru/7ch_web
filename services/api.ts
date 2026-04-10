@@ -131,6 +131,8 @@ class RealService implements I7chAPI {
   }
 
   getBoards(): Promise<Board[]> {
+    // 前端 UI 会过滤当前隐藏的兼容板块（如 `baito`），
+    // 这里仍保留原始 `/api/boards` 调用，避免改动后端契约。
     return this.request<Board[]>("/api/boards");
   }
 
@@ -159,6 +161,8 @@ class RealService implements I7chAPI {
   }
 
   convertSubscription(payload: SubscriptionConvertRequest): Promise<SubscriptionConvertResponse> {
+    // `/tools/convert` 已从前端公开入口移除，
+    // 但订阅转换相关 API 仍保留在客户端封装中，用于兼容、联调或受控调用。
     return this.request<SubscriptionConvertResponse>("/api/subscription/convert", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -166,6 +170,7 @@ class RealService implements I7chAPI {
   }
 
   createSubscriptionLink(payload: CreateSubscriptionLinkRequest): Promise<CreateSubscriptionLinkResponse> {
+    // 同上：前端不再公开展示该功能，但不移除 API 封装与数据契约。
     return this.request<CreateSubscriptionLinkResponse>("/api/subscription/link", {
       method: "POST",
       body: JSON.stringify(payload),
