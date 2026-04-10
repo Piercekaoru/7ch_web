@@ -14,79 +14,6 @@ const parsePositiveInteger = (value: string | undefined, fallback: number) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
-const matchesChunkKeywords = (id: string, keywords: string[]) => {
-  return keywords.some((keyword) => id.includes(keyword));
-};
-
-const resolveManualChunk = (id: string) => {
-  if (!id.includes('node_modules')) return undefined;
-
-  if (matchesChunkKeywords(id, [
-    'react-syntax-highlighter',
-    'refractor',
-    'prismjs',
-  ])) {
-    return 'vendor-syntax';
-  }
-
-  if (matchesChunkKeywords(id, [
-    'react-markdown',
-    'remark-',
-    'rehype-',
-    'mdast-util-',
-    'micromark',
-    'hast-util-',
-    'unist-util-',
-    'vfile',
-    'unified',
-    'property-information',
-    'space-separated-tokens',
-    'comma-separated-tokens',
-    'decode-named-character-reference',
-    'character-entities',
-    'markdown-table',
-    'zwitch',
-    'trough',
-    'bail',
-  ])) {
-    return 'vendor-markdown';
-  }
-
-  if (matchesChunkKeywords(id, [
-    '@radix-ui',
-    '@floating-ui',
-    'react-remove-scroll',
-    'react-style-singleton',
-    'aria-hidden',
-    'use-callback-ref',
-    'use-sidecar',
-  ])) {
-    return 'vendor-radix';
-  }
-
-  if (id.includes('react-router') || id.includes('@remix-run')) {
-    return 'vendor-router';
-  }
-
-  if (id.includes('react-i18next') || id.includes('i18next')) {
-    return 'vendor-i18n';
-  }
-
-  if (id.includes('lucide-react')) {
-    return 'vendor-icons';
-  }
-
-  if (
-    id.includes('/react/') ||
-    id.includes('/react-dom/') ||
-    id.includes('/scheduler/')
-  ) {
-    return 'vendor-react';
-  }
-
-  return undefined;
-};
-
 // Vite 配置：开发服务器、别名与环境变量注入。
 // Vite config: dev server, aliases, and env injections.
 export default defineConfig(({ mode }) => {
@@ -130,13 +57,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': projectRoot,
-      },
-    },
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: resolveManualChunk,
-        },
       },
     },
   };
