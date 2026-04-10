@@ -80,12 +80,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
           </div>
         </aside>
 
-        {/* Mobile Nav / Back */}
-        <div className="md:hidden mb-4">
-          <button onClick={onBack} className="themed-inline-action font-bold">
-            &larr; {t('nav.home')}
-          </button>
-        </div>
+
 
         {/* Main Content */}
         <main className="themed-static-main min-h-[500px] flex-1 p-6 md:p-10">
