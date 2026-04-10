@@ -26,9 +26,10 @@ const variantOptions: Array<{
 interface ThemeSwitcherProps {
   compact?: boolean;
   fullWidth?: boolean;
+  onSelect?: () => void;
 }
 
-export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ compact = false, fullWidth = false }) => {
+export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ compact = false, fullWidth = false, onSelect }) => {
   const { t } = useTranslation();
   const { theme, themeVariant, setTheme, setThemeVariant } = useTheme();
 
@@ -63,7 +64,10 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ compact = false, f
               <button
                 key={value}
                 type="button"
-                onClick={() => setThemeVariant(value)}
+                onClick={() => {
+                  setThemeVariant(value);
+                  onSelect?.();
+                }}
                 aria-pressed={active}
                 className={cn(
                   'inline-flex items-center justify-center rounded-[0.85rem] px-3 py-1.5 text-xs font-medium transition-all',
@@ -102,7 +106,10 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ compact = false, f
               <button
                 key={value}
                 type="button"
-                onClick={() => setTheme(value)}
+                onClick={() => {
+                  setTheme(value);
+                  onSelect?.();
+                }}
                 aria-pressed={active}
                 title={t(labelKey)}
                 className={cn(

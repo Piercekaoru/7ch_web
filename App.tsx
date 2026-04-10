@@ -1086,7 +1086,10 @@ const App: React.FC = () => {
                 <div className="py-1">
                   <button
                     className="block w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary"
-                    onClick={() => setShowMobileLoginDialog(true)}
+                    onClick={() => {
+                      setShowMobileLoginDialog(true);
+                      setShowMobileMenu(false);
+                    }}
                   >
                     {t('dialog.login.button')}
                   </button>
@@ -1112,7 +1115,11 @@ const App: React.FC = () => {
                     <div className="themed-kicker mb-2">
                       {t('theme.title')}
                     </div>
-                    <ThemeSwitcher compact fullWidth />
+                    <ThemeSwitcher
+                      compact
+                      fullWidth
+                      onSelect={() => setShowMobileMenu(false)}
+                    />
                   </div>
                   <div className="border-t border-border pt-1">
                     {['zh-CN', 'ja-JP'].map(l => (
