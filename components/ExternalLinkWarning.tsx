@@ -15,16 +15,11 @@ import { isExternalHttpUrl } from '../lib/externalLinks';
 
 interface PendingExternalLink {
   url: string;
-  openInNewTab: boolean;
 }
 
 const findAnchor = (target: EventTarget | null) => {
   if (!(target instanceof Element)) return null;
   return target.closest<HTMLAnchorElement>('a[href]');
-};
-
-const shouldOpenInNewTab = (event: MouseEvent, anchor: HTMLAnchorElement) => {
-  return anchor.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1;
 };
 
 export const ExternalLinkWarningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -44,7 +39,6 @@ export const ExternalLinkWarningProvider: React.FC<{ children: React.ReactNode }
       event.stopPropagation();
       setPendingLink({
         url: anchor.href,
-        openInNewTab: shouldOpenInNewTab(event, anchor),
       });
     };
 
@@ -66,15 +60,7 @@ export const ExternalLinkWarningProvider: React.FC<{ children: React.ReactNode }
     setPendingLink(null);
     if (!link) return;
 
-    if (link.openInNewTab) {
-      const openedWindow = window.open(link.url, '_blank', 'noopener,noreferrer');
-      if (!openedWindow) {
-        window.location.assign(link.url);
-      }
-      return;
-    }
-
-    window.location.assign(link.url);
+    window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
