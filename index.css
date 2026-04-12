@@ -523,9 +523,9 @@
   }
 
   .themed-callout-warn {
-    border: 1px solid hsl(35 70% 70% / 0.45);
-    background-color: hsl(38 100% 95%);
-    color: hsl(24 27% 41%);
+    border: 1px solid hsl(var(--brand) / 0.22);
+    background-color: hsl(var(--brand) / 0.1);
+    color: hsl(var(--foreground));
     border-radius: calc(var(--radius) + 0.2rem);
   }
 
