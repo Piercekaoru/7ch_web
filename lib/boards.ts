@@ -20,10 +20,15 @@ export const fallbackBoards: Board[] = [
 
 export const mergeBoardsWithStatic = (boards: Board[]) => {
   const seen = new Set<string>();
-  return [...boards.filter((board) => isBoardVisible(board.id)), commonLinksBoard].filter((board) => {
+  const allBoard = fallbackBoards.find((board) => board.id === 'all');
+
+  return [
+    ...(allBoard ? [allBoard] : []),
+    ...boards.filter((board) => isBoardVisible(board.id)),
+    commonLinksBoard,
+  ].filter((board) => {
     if (seen.has(board.id)) return false;
     seen.add(board.id);
     return true;
   });
 };
-
