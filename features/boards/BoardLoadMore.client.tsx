@@ -30,11 +30,11 @@ function LoadedThreadCard({ thread }: { thread: Thread }) {
       <div className="mb-2 text-xs themed-meta">
         {formatLocalizedCalendarDateTime(new Date(thread.updatedAt), i18n.language)} ID:{thread.opPost.uid}
       </div>
-      <h2 className="themed-heading-sm mb-2 text-lg hover:underline sm:text-[1.35rem]">
+      <h2 className="themed-heading-sm mb-2 break-words text-lg hover:underline [overflow-wrap:anywhere] sm:text-[1.35rem]">
         <Link href={href}>{thread.title}</Link>
       </h2>
       {summary && (
-        <p className="mb-4 text-sm leading-relaxed text-foreground">
+        <p className="mb-4 break-words text-sm leading-relaxed text-foreground [overflow-wrap:anywhere]">
           <Link href={href}>{summary}</Link>
         </p>
       )}
