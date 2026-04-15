@@ -11,8 +11,9 @@
     "next:dev": "next dev",
     "next:build": "next build",
     "next:start": "next start",
-    "build": "vite build",
-    "build:with-changelog": "npm run update-changelog && vite build",
+    "build": "next build",
+    "vite:build": "vite build",
+    "vite:build:with-changelog": "npm run update-changelog && vite build",
     "preview": "vite preview",
     "update-changelog": "node scripts/update-changelog.cjs"
   },
