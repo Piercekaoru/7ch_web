@@ -214,7 +214,6 @@ export function SiteHeaderClient({ initialLocale, labels }: SiteHeaderClientProp
                     <button
                       className="block w-full rounded-md px-3 py-2 text-left hover:bg-secondary"
                       type="button"
-                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {text('dialog.login.button')}
                     </button>
