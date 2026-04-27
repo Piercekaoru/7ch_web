@@ -4,6 +4,7 @@
 module.exports = {
   darkMode: ['class'],
   content: [
+    './index.html',
     './**/*.{ts,tsx}',
     '!./node_modules/**',
   ],

@@ -9,7 +9,7 @@ export async function SiteFooter() {
   const locale = await getServerLocale();
 
   return (
-    <footer className="themed-footer-shell bbs-desktop-footer mt-auto py-8 text-center text-sm">
+    <footer className="themed-footer-shell mt-auto py-8 text-center text-sm">
       <div className="mb-4 flex flex-wrap justify-center gap-4 sm:gap-6">
         <Link className="themed-nav-link hover:underline" href={buildLocalizedStaticPath('/privacy', locale)}>
           {tServer('page.privacy.title', locale)}

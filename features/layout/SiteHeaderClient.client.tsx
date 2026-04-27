@@ -137,7 +137,7 @@ export function SiteHeaderClient({ initialLocale, labels }: SiteHeaderClientProp
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={text('nav.searchPlaceholder')}
-        className="themed-search-field w-full rounded-md px-3 py-1.5 pr-16 text-sm transition-colors focus:border-[hsl(var(--ring))] focus:outline-none md:w-56 lg:w-64"
+        className="themed-search-field w-full rounded-md px-3 py-1.5 pr-16 text-sm transition-colors focus:border-[hsl(var(--ring))] focus:outline-none md:w-56"
       />
       <div className="pointer-events-none absolute right-2 flex items-center gap-1">
         <kbd className="themed-search-kbd hidden h-5 select-none items-center gap-1 rounded-md px-1.5 font-mono text-[10px] font-medium sm:inline-flex">
@@ -149,18 +149,18 @@ export function SiteHeaderClient({ initialLocale, labels }: SiteHeaderClientProp
   );
 
   return (
-    <header className="themed-header-shell bbs-desktop-header sticky top-0 z-20">
-      <div className="mx-auto flex min-h-14 max-w-7xl items-center justify-between gap-3 px-4 py-2 lg:min-h-[70px] lg:max-w-[1240px] lg:px-6 xl:max-w-[1320px]">
+    <header className="themed-header-shell sticky top-0 z-20">
+      <div className="mx-auto flex min-h-14 max-w-7xl items-center justify-between gap-3 px-4 py-2">
         <Link href="/" className="flex items-center">
-          <span className="themed-brandmark text-xl sm:text-2xl lg:text-[1.7rem]">{siteName}</span>
+          <span className="themed-brandmark text-xl sm:text-2xl">{siteName}</span>
         </Link>
 
-        <div className="hidden items-center gap-4 md:flex lg:gap-3">
+        <div className="hidden items-center gap-4 md:flex">
           {renderSearchForm()}
-          <nav className="flex items-center gap-3 text-sm font-medium lg:gap-2">
+          <nav className="flex items-center gap-3 text-sm font-medium">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className="lg:h-9 lg:rounded-md lg:px-4" variant="outline">{text('dialog.login.button')}</Button>
+                <Button variant="outline">{text('dialog.login.button')}</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -175,10 +175,10 @@ export function SiteHeaderClient({ initialLocale, labels }: SiteHeaderClientProp
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Link className="themed-nav-link rounded-md px-2 py-2 hover:underline" href="/">
+            <Link className="themed-nav-link hover:underline" href="/">
               {text('nav.boards')}
             </Link>
-            <Link className="themed-nav-link rounded-md px-2 py-2 hover:underline" href="/favorites">
+            <Link className="themed-nav-link hover:underline" href="/favorites">
               {text('nav.favorites')}
             </Link>
           </nav>
